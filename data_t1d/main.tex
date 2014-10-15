@@ -1,0 +1,191 @@
+\documentclass[a4paper]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt} \usepackage{graphicx} \usepackage{geometry} \geometry{a4paper, left=25mm, right=25mm, top=30mm, bottom=30mm} \usepackage[colorlinks=true, linkcolor=blue]{hyperref} \author{Angermuller Christof}
+\title{Prepare T1D data for practical}
+\date{\today}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\maketitle
+\newpage
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{0}\hlstd{)}
+\hlkwd{library}\hlstd{(knitr)}
+\hlstd{opts_chunk}\hlopt{$}\hlkwd{set}\hlstd{(}\hlkwc{echo}\hlstd{=T,} \hlkwc{fig.align}\hlstd{=}\hlstr{'center'}\hlstd{)}
+\hlkwd{library}\hlstd{(xtable)}
+\hlkwd{library}\hlstd{(ggplot2)}
+\hlkwd{library}\hlstd{(RColorBrewer)}
+\hlkwd{library}\hlstd{(plyr)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{D} \hlkwb{<-} \hlkwd{new.env}\hlstd{()}
+\hlkwd{load}\hlstd{(}\hlstr{'../data_raw/t1d.RData'}\hlstd{,} \hlkwc{env}\hlstd{=D)}
+\hlstd{t1d} \hlkwb{<-} \hlstd{D}\hlopt{$}\hlstd{N}\hlopt{$}\hlstd{full}
+\hlstd{var_meta} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{'y'}\hlstd{,} \hlstr{'hlacat'}\hlstd{,} \hlstr{'sex'}\hlstd{,} \hlstr{'age'}\hlstd{,} \hlstr{'european'}\hlstd{)}
+\hlstd{meta} \hlkwb{<-} \hlstd{t1d[, var_meta]}
+\hlkwd{names}\hlstd{(meta)[}\hlnum{1}\hlstd{]} \hlkwb{<-} \hlstr{'t1d'}
+\hlkwd{levels}\hlstd{(meta}\hlopt{$}\hlstd{t1d)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{'no'}\hlstd{,} \hlstr{'yes'}\hlstd{)}
+\hlstd{var_mut} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{'ptpn22_rs2476601'}\hlstd{,} \hlstr{'il10_rs3024505'}\hlstd{,} \hlstr{'ctla4_rs3087243'}\hlstd{,} \hlstr{'bach2_rs11755527'}\hlstd{,} \hlstr{'erbb3_rs2292239'}\hlstd{,} \hlstr{'gab3_rs2664170'}\hlstd{)}
+\hlstd{mut} \hlkwb{<-} \hlstd{t1d[, var_mut]}
+\hlkwd{names}\hlstd{(mut)} \hlkwb{<-} \hlkwd{sub}\hlstd{(}\hlstr{'_\textbackslash{}\textbackslash{}w+'}\hlstd{,} \hlstr{''}\hlstd{,} \hlkwd{names}\hlstd{(mut))}
+\hlstd{t1d} \hlkwb{<-} \hlkwd{cbind}\hlstd{(meta, mut)}
+\hlkwd{head}\hlstd{(t1d)}
+\end{alltt}
+\begin{verbatim}
+##   t1d hlacat sex age european ptpn22 il10 ctla4 bach2 erbb3 gab3
+## 1 yes      6   f   2     TRUE      0    1     2     2     2    1
+## 2 yes      6   m   9     TRUE      0    2     1     2     0    0
+## 3 yes      6   m  12     TRUE      0    2     0     1     1    0
+## 4 yes      6   m   7     TRUE      0    2     1     1     0    0
+## 5 yes      6   m   6     TRUE      0    2     1     2     1    0
+## 6 yes      6   m   6     TRUE      0    1     2    NA     1    2
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{age} \hlkwb{<-} \hlstd{t1d}\hlopt{$}\hlstd{age}
+\hlkwd{hist}\hlstd{(age[}\hlopt{!}\hlkwd{is.null}\hlstd{(age)])}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/prep21} 
+
+}
+
+
+\begin{kframe}\begin{alltt}
+\hlstd{age_mean} \hlkwb{<-} \hlkwd{mean}\hlstd{(t1d}\hlopt{$}\hlstd{age,} \hlkwc{na.rm}\hlstd{=T)}
+\hlstd{age_sd} \hlkwb{<-} \hlkwd{sd}\hlstd{(t1d}\hlopt{$}\hlstd{age,} \hlkwc{na.rm}\hlstd{=T)}
+\hlstd{age_norm} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(}\hlkwd{length}\hlstd{(age), age_mean, age_sd)}
+\hlstd{age_norm[age_norm} \hlopt{<} \hlnum{0}\hlstd{]} \hlkwb{<-} \hlnum{0}
+\hlkwd{hist}\hlstd{(age_norm)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/prep22} 
+
+}
+
+
+\begin{kframe}\begin{alltt}
+\hlstd{t1d}\hlopt{$}\hlstd{age} \hlkwb{<-} \hlstd{age_norm}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{t1d} \hlkwb{<-} \hlstd{t1d[}\hlkwd{complete.cases}\hlstd{(t1d),]}
+\hlkwd{table}\hlstd{(t1d}\hlopt{$}\hlstd{t1d)}
+\end{alltt}
+\begin{verbatim}
+## 
+##   no  yes 
+## 1766 7861
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+\begin{kframe}
+\begin{alltt}
+\hlkwd{xtable}\hlstd{(}\hlkwd{head}\hlstd{(t1d,} \hlkwc{n}\hlstd{=}\hlnum{20}\hlstd{))}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.1.1 by xtable 1.7-4 package
+% Wed Oct 15 11:39:59 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlrlrlrrrrrr}
+  \hline
+ & t1d & hlacat & sex & age & european & ptpn22 & il10 & ctla4 & bach2 & erbb3 & gab3 \\ 
+  \hline
+1 & yes &   6 & f & 12.96 & TRUE &   0 &   1 &   2 &   2 &   2 &   1 \\ 
+  2 & yes &   6 & m & 6.64 & TRUE &   0 &   2 &   1 &   2 &   0 &   0 \\ 
+  3 & yes &   6 & m & 13.23 & TRUE &   0 &   2 &   0 &   1 &   1 &   0 \\ 
+  4 & yes &   6 & m & 13.00 & TRUE &   0 &   2 &   1 &   1 &   0 &   0 \\ 
+  5 & yes &   6 & m & 9.59 & TRUE &   0 &   2 &   1 &   2 &   1 &   0 \\ 
+  7 & yes &   6 & f & 4.24 & TRUE &   0 &   2 &   2 &   2 &   1 &   0 \\ 
+  8 & yes &   6 & m & 6.76 & TRUE &   0 &   2 &   2 &   2 &   2 &   0 \\ 
+  9 & yes &   6 & f & 7.91 & TRUE &   0 &   1 &   1 &   1 &   0 &   1 \\ 
+  12 & yes &   6 & f & 4.76 & TRUE &   0 &   2 &   2 &   1 &   2 &   1 \\ 
+  13 & yes &   6 & f & 3.37 & TRUE &   0 &   1 &   2 &   0 &   2 &   2 \\ 
+  14 & yes &   6 & f & 6.78 & TRUE &   0 &   1 &   2 &   1 &   2 &   2 \\ 
+  15 & yes &   6 & m & 6.75 & TRUE &   0 &   1 &   1 &   2 &   1 &   0 \\ 
+  16 & yes &   6 & f & 6.30 & TRUE &   0 &   2 &   0 &   0 &   1 &   0 \\ 
+  17 & yes &   6 & m & 8.94 & TRUE &   1 &   2 &   1 &   1 &   0 &   0 \\ 
+  18 & yes &   6 & f & 4.39 & TRUE &   0 &   2 &   0 &   1 &   2 &   1 \\ 
+  19 & yes &   6 & m & 9.67 & TRUE &   0 &   2 &   2 &   1 &   1 &   0 \\ 
+  20 & yes &   6 & f & 3.01 & TRUE &   0 &   2 &   2 &   2 &   1 &   1 \\ 
+  21 & yes &   6 & f & 7.04 & TRUE &   0 &   2 &   1 &   1 &   0 &   0 \\ 
+  22 & yes &   6 & m & 9.44 & TRUE &   0 &   2 &   2 &   1 &   1 &   0 \\ 
+  23 & yes &   6 & m & 8.47 & TRUE &   2 &   1 &   1 &   0 &   0 &   2 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{write.table}\hlstd{(t1d,} \hlkwc{file}\hlstd{=}\hlstr{'t1d.csv'}\hlstd{,} \hlkwc{row.names}\hlstd{=}\hlnum{FALSE}\hlstd{,} \hlkwc{sep}\hlstd{=}\hlstr{'\textbackslash{}t'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{document}

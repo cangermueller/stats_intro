@@ -1,0 +1,57 @@
+\documentclass[a4paper]{article} \usepackage{graphicx} \usepackage{geometry} \geometry{a4paper, left=25mm, right=25mm, top=30mm, bottom=30mm} \usepackage[colorlinks=true, linkcolor=blue]{hyperref} \author{Angermuller Christof}
+\title{Prepare T1D data for practical}
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+
+<<init, include=T>>=
+set.seed(0)
+library(knitr)
+opts_chunk$set(echo=T, fig.align='center')
+library(xtable)
+library(ggplot2)
+library(RColorBrewer)
+library(plyr)
+@
+
+<<prep1>>=
+D <- new.env()
+load('../data_raw/t1d.RData', env=D)
+t1d <- D$N$full
+var_meta <- c('y', 'hlacat', 'sex', 'age', 'european')
+meta <- t1d[, var_meta]
+names(meta)[1] <- 't1d'
+levels(meta$t1d) <- c('no', 'yes')
+var_mut <- c('ptpn22_rs2476601', 'il10_rs3024505', 'ctla4_rs3087243', 'bach2_rs11755527', 'erbb3_rs2292239', 'gab3_rs2664170')
+mut <- t1d[, var_mut]
+names(mut) <- sub('_\\w+', '', names(mut))
+t1d <- cbind(meta, mut)
+head(t1d)
+@
+
+<<prep2>>=
+age <- t1d$age
+hist(age[!is.null(age)])
+age_mean <- mean(t1d$age, na.rm=T)
+age_sd <- sd(t1d$age, na.rm=T)
+age_norm <- rnorm(length(age), age_mean, age_sd)
+age_norm[age_norm < 0] <- 0
+hist(age_norm)
+t1d$age <- age_norm
+@
+
+<<prep3>>=
+t1d <- t1d[complete.cases(t1d),]
+table(t1d$t1d)
+@
+
+<<prep4, results='asis'>>=
+xtable(head(t1d, n=20))
+@
+
+<<save>>=
+write.table(t1d, file='t1d.csv', row.names=FALSE, sep='\t')
+@
+\end{document}

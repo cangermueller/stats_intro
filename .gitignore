@@ -1,0 +1,44 @@
+# Temporary and binary files
+*~
+*.py[cod]
+*.so
+*.cfg
+*.orig
+*.log
+*.pot
+__pycache__/*
+.cache/*
+.*.swp
+.ipynb_checkpoints
+.DS_Store
+
+# Latex files
+*.out
+*.log
+*.pdf
+*.aux
+*.out
+*.fdb_latexmk
+*.fls
+*.dvi
+*.fdb_latexmk
+*.fls
+*.toc
+*.nav
+*.snm
+
+# Project files
+.ropeproject
+.project
+.pydevproject
+.settings
+.idea
+
+# Package files
+*.egg
+.installed.cfg
+*.egg-info
+
+# Directories
+/tmp/
+/data/
