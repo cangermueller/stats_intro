@@ -26,6 +26,7 @@ __pycache__/*
 *.toc
 *.nav
 *.snm
+*.vrb
 
 # Project files
 .ropeproject
