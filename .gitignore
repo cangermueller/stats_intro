@@ -45,3 +45,4 @@ __pycache__/*
 /tmp/
 /data/
 /data_raw/
+cache/
