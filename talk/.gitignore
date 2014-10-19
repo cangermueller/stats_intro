@@ -11,12 +11,10 @@ __pycache__/*
 .*.swp
 .ipynb_checkpoints
 .DS_Store
-*.h5
 
 # Latex files
 *.out
 *.log
-*.pdf
 *.aux
 *.out
 *.fdb_latexmk
@@ -36,12 +34,6 @@ __pycache__/*
 .settings
 .idea
 
-# Package files
-*.egg
-.installed.cfg
-*.egg-info
-
-# Directories
-/tmp/
-/data/
-/data_raw/
+cache/
+*.pdf
+*.RData

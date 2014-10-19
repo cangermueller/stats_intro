@@ -1,0 +1,569 @@
+\documentclass{beamer}
+\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\newcommand{\SweaveOpts}[1]{}  % do not interfere with LaTeX
+\newcommand{\SweaveInput}[1]{} % because they are not real TeX commands
+\newcommand{\Sexpr}[1]{}       % will only be parsed by R
+
+
+\usetheme{Boadilla}
+\usecolortheme{beaver}
+
+
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+
+\author{Christof Angermueller}
+\title{Statistics Introduction}
+\date{\today}
+
+
+
+\begin{document}
+
+
+
+
+\section{Relationship between variables}
+\begin{frame}
+\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Overview}
+  \begin{itemize}
+    \item How are $X$ and $Y$ related?
+    \item $X$: input variable, explanatory variable, covariates
+    \item $Y$: output variable, target variable
+    \item Is the relationship significant?
+  \end{itemize}
+  \begin{definition}[Hypothesis testing]
+    \begin{description}
+      \item[$H0$] Null hypothesis - which we want to reject
+      \item[$\alpha$] Probability to reject $H0$, although it is true (FPR)
+      \item[$1-\alpha$] Confidence level
+      \item[p-value] Probability to make an observation at least as extreme as
+        the one we did, given that $H0$ is true
+      \item[$\text{p-value} < \alpha$] Rejection criterion
+    \end{description}
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Overview}
+  \begin{table}
+    \begin{tabular}{c|c|c}
+      \toprule
+      & \textbf{Discrete} & \textbf{Continuous} \\ \hline
+      \textbf{Discrete} & Score test & Z test \\
+      & Fisher's exact test & Student's t test \\
+      & $\chi^2$ test & \\
+      & Logistic regression & \\ \hline
+      \textbf{Continuous} & \textit{Descretize} & Correlation \\
+      &  & Linear regression \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}[fragile]{Example: testing two proportions}
+  \begin{itemize}
+    \item Are females more likely to develop T1D than males?
+  \end{itemize}
+\begin{kframe}
+\begin{alltt}
+\hlstd{sex_t1d} \hlkwb{<-} \hlkwd{table}\hlstd{(D}\hlopt{$}\hlstd{sex,} \hlkwd{relevel}\hlstd{(D}\hlopt{$}\hlstd{t1d,} \hlstr{'yes'}\hlstd{))}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: 'relevel' only for factors}}\begin{alltt}
+\hlkwd{xtable}\hlstd{(sex_t1d)}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.1.1 by xtable 1.7-4 package
+% Sun Oct 19 11:28:29 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & yes & no \\ 
+  \hline
+f & 3775 & 946 \\ 
+  m & 4086 & 820 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}[fragile]{Score test}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{prop.test}\hlstd{(sex_t1d,} \hlkwc{conf.level}\hlstd{=}\hlnum{0.95}\hlstd{,} \hlkwc{alternative}\hlstd{=}\hlstr{'two.sided'}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	2-sample test for equality of proportions with continuity
+## 	correction
+## 
+## data:  sex_t1d
+## X-squared = 17.52, df = 1, p-value = 2.837e-05
+## alternative hypothesis: two.sided
+## 95 percent confidence interval:
+##  -0.04892 -0.01756
+## sample estimates:
+## prop 1 prop 2 
+## 0.7996 0.8329
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Fisher's exact test}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{fisher.test}\hlstd{(sex_t1d,} \hlkwc{conf.level}\hlstd{=}\hlnum{0.95}\hlstd{,} \hlkwc{alternative}\hlstd{=}\hlstr{'two.sided'}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## 
+## 	Fisher's Exact Test for Count Data
+## 
+## data:  sex_t1d
+## p-value = 2.789e-05
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  0.7211 0.8893
+## sample estimates:
+## odds ratio 
+##     0.8009
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Example: comparing means}
+  \begin{itemize}
+    \item Are females significantly older than males?
+  \end{itemize}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(D)} \hlopt{+} \hlkwd{geom_density}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=age,} \hlkwc{y}\hlstd{=..density..,} \hlkwc{group}\hlstd{=sex,} \hlkwc{fill}\hlstd{=sex,} \hlkwc{color}\hlstd{=sex),} \hlkwc{alpha}\hlstd{=}\hlnum{.5}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: ggplot2 doesn't know how to deal with data of class list}}\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Student's t test}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{t.test}\hlstd{(D}\hlopt{$}\hlstd{age[D}\hlopt{$}\hlstd{sex} \hlopt{==} \hlstr{'f'}\hlstd{], D}\hlopt{$}\hlstd{age[D}\hlopt{$}\hlstd{sex} \hlopt{==} \hlstr{'m'}\hlstd{],} \hlkwc{alternative}\hlstd{=}\hlstr{'greater'}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\color{warningcolor}{\#\# Warning: is.na() applied to non-(list or vector) of type 'NULL'\\\#\# Warning: argument is not numeric or logical: returning NA}}
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: 'x' is NULL}}\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{ANOVA}
+  \begin{itemize}
+    \item Does PTPN22 influence the risk of T1D?
+  \end{itemize}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{table}\hlstd{(D}\hlopt{$}\hlstd{ptpn22, D}\hlopt{$}\hlstd{t1d)}
+\end{alltt}
+\begin{verbatim}
+## < table of extent 0 x 0 >
+\end{verbatim}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(D)} \hlopt{+} \hlkwd{geom_bar}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=ptpn22,} \hlkwc{fill}\hlstd{=t1d),} \hlkwc{position}\hlstd{=}\hlstr{'fill'}\hlstd{)} \hlopt{+}
+\hlkwd{scale_x_discrete}\hlstd{(}\hlkwc{limits}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{2}\hlstd{))} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{'Risk level'}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{'Proportion'}\hlstd{)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: ggplot2 doesn't know how to deal with data of class list}}\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{ANOVA}
+  \begin{itemize}
+    \item Fitting logistic regression model
+  \end{itemize}
+\begin{kframe}
+\begin{alltt}
+\hlstd{model} \hlkwb{<-} \hlkwd{glm}\hlstd{(t1d} \hlopt{~} \hlkwd{factor}\hlstd{(ptpn22),} \hlkwc{data}\hlstd{=D,} \hlkwc{family}\hlstd{=binomial)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: object 't1d' not found}}\begin{alltt}
+\hlkwd{xtable}\hlstd{(model)}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.1.1 by xtable 1.7-4 package
+% Sun Oct 19 11:28:30 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & z value & Pr($>$$|$z$|$) \\ 
+  \hline
+(Intercept) & -2.2612 & 0.1583 & -14.29 & 0.0000 \\ 
+  hlacat & 0.8121 & 0.0240 & 33.89 & 0.0000 \\ 
+  sexm & 0.1896 & 0.0601 & 3.16 & 0.0016 \\ 
+  age & 0.0151 & 0.0077 & 1.95 & 0.0512 \\ 
+  ptpn22 & 0.7633 & 0.0673 & 11.34 & 0.0000 \\ 
+  il10 & 0.2665 & 0.0585 & 4.56 & 0.0000 \\ 
+  ctla4 & 0.0788 & 0.0431 & 1.83 & 0.0675 \\ 
+  bach2 & 0.2285 & 0.0422 & 5.42 & 0.0000 \\ 
+  erbb3 & 0.3360 & 0.0447 & 7.52 & 0.0000 \\ 
+  gab3 & 0.1930 & 0.0374 & 5.16 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}[fragile]{ANOVA}
+  \begin{itemize}
+    \item Likelihood Ratio Test
+  \end{itemize}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{anova}\hlstd{(model,} \hlkwc{test}\hlstd{=}\hlstr{'LRT'}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## Analysis of Deviance Table
+## 
+## Model: binomial, link: logit
+## 
+## Response: t1d
+## 
+## Terms added sequentially (first to last)
+## 
+## 
+##        Df Deviance Resid. Df Resid. Dev Pr(>Chi)    
+## NULL                    9626       9176             
+## hlacat  1     1916      9625       7260  < 2e-16 ***
+## sex     1       10      9624       7250   0.0013 ** 
+## age     1        4      9623       7246   0.0525 .  
+## ptpn22  1      147      9622       7099  < 2e-16 ***
+## il10    1       19      9621       7080  1.1e-05 ***
+## ctla4   1        3      9620       7077   0.1036    
+## bach2   1       33      9619       7045  1.0e-08 ***
+## erbb3   1       59      9618       6986  2.0e-14 ***
+## gab3    1       27      9617       6959  1.9e-07 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Logistic Regression}
+  \begin{itemize}
+    \item Testing all variables
+  \end{itemize}
+\begin{kframe}
+\begin{alltt}
+\hlstd{model} \hlkwb{<-} \hlkwd{glm}\hlstd{(t1d} \hlopt{~} \hlstd{.}\hlopt{-}\hlstd{(european),} \hlkwc{data}\hlstd{=D,} \hlkwc{family}\hlstd{=binomial)}
+\end{alltt}
+
+
+{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error: protect(): protection stack overflow}}\begin{alltt}
+\hlkwd{xtable}\hlstd{(model)}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.1.1 by xtable 1.7-4 package
+% Sun Oct 19 09:41:00 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrrrr}
+  \hline
+ & Estimate & Std. Error & z value & Pr($>$$|$z$|$) \\ 
+  \hline
+(Intercept) & -2.2612 & 0.1583 & -14.29 & 0.0000 \\ 
+  hlacat & 0.8121 & 0.0240 & 33.89 & 0.0000 \\ 
+  sexm & 0.1896 & 0.0601 & 3.16 & 0.0016 \\ 
+  age & 0.0151 & 0.0077 & 1.95 & 0.0512 \\ 
+  ptpn22 & 0.7633 & 0.0673 & 11.34 & 0.0000 \\ 
+  il10 & 0.2665 & 0.0585 & 4.56 & 0.0000 \\ 
+  ctla4 & 0.0788 & 0.0431 & 1.83 & 0.0675 \\ 
+  bach2 & 0.2285 & 0.0422 & 5.42 & 0.0000 \\ 
+  erbb3 & 0.3360 & 0.0447 & 7.52 & 0.0000 \\ 
+  gab3 & 0.1930 & 0.0374 & 5.16 & 0.0000 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}[fragile]{Logistic Regression}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{lor} \hlkwb{<-} \hlkwd{sort}\hlstd{(}\hlkwd{coef}\hlstd{(model)[}\hlopt{-}\hlnum{1}\hlstd{],} \hlkwc{decreasing}\hlstd{=}\hlnum{TRUE}\hlstd{)}
+\hlkwd{barplot}\hlstd{(lor,} \hlkwc{las}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{'lightblue'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'Log-odds ratio'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.9\linewidth]{figure/glm_all_lor} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{ESC data}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{E} \hlkwb{<-} \hlkwd{list}\hlstd{()}
+\hlkwa{for} \hlstd{(name} \hlkwa{in} \hlkwd{c}\hlstd{(}\hlstr{'counts'}\hlstd{,} \hlstr{'labels'}\hlstd{)) \{}
+  \hlstd{E[[name]]} \hlkwb{<-} \hlkwd{h5read}\hlstd{(}\hlstr{'../../data_esc/esc.h5'}\hlstd{, name)}
+\hlstd{\}}
+\hlstd{E}\hlopt{$}\hlstd{counts} \hlkwb{<-} \hlstd{E}\hlopt{$}\hlstd{counts[,} \hlkwd{colSums}\hlstd{(E}\hlopt{$}\hlstd{counts)} \hlopt{>} \hlnum{0}\hlstd{]}
+\hlstd{E}\hlopt{$}\hlstd{cycle} \hlkwb{<-} \hlkwd{factor}\hlstd{(E}\hlopt{$}\hlstd{labels,} \hlkwc{labels}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{'G1'}\hlstd{,} \hlstr{'S'}\hlstd{,} \hlstr{'G2M'}\hlstd{))}
+\hlstd{E}\hlopt{$}\hlstd{names} \hlkwb{<-} \hlkwd{paste}\hlstd{(}\hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{length}\hlstd{(E}\hlopt{$}\hlstd{labels)), E}\hlopt{$}\hlstd{cycle)}
+\hlkwd{rownames}\hlstd{(E}\hlopt{$}\hlstd{counts)} \hlkwb{<-} \hlstd{E}\hlopt{$}\hlstd{names}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{nrow}\hlstd{(E}\hlopt{$}\hlstd{counts)}
+\end{alltt}
+\begin{verbatim}
+## [1] 182
+\end{verbatim}
+\begin{alltt}
+\hlkwd{ncol}\hlstd{(E}\hlopt{$}\hlstd{counts)}
+\end{alltt}
+\begin{verbatim}
+## [1] 26702
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{ESC data}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{heatmap}\hlstd{(E}\hlopt{$}\hlstd{counts[,} \hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{ncol}\hlstd{(E}\hlopt{$}\hlstd{counts),} \hlnum{100}\hlstd{)],} \hlkwc{Rowv}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{Colv}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{labCol}\hlstd{=}\hlnum{NA}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.8\linewidth]{figure/heat_esc} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Correlation}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{c1} \hlkwb{<-} \hlstd{E}\hlopt{$}\hlstd{counts[}\hlkwd{which}\hlstd{(E}\hlopt{$}\hlstd{cycle} \hlopt{==} \hlstr{'G1'}\hlstd{)[}\hlnum{1}\hlstd{],]}
+\hlstd{c2} \hlkwb{<-} \hlstd{E}\hlopt{$}\hlstd{counts[}\hlkwd{which}\hlstd{(E}\hlopt{$}\hlstd{cycle} \hlopt{==} \hlstr{'S'}\hlstd{)[}\hlnum{1}\hlstd{],]}
+\hlkwd{qplot}\hlstd{(c1, c2,} \hlkwc{xlab}\hlstd{=}\hlstr{'G1 cell'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'S cell'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.6\linewidth]{figure/cor_c1_c2} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Pearson correlation coefficient}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{cor}\hlstd{(c1, c2,} \hlkwc{method}\hlstd{=}\hlstr{'pearson'}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.7123
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Spearman correlation coefficient}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{cor}\hlstd{(c1, c2,} \hlkwc{method}\hlstd{=}\hlstr{'spearman'}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.6952
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Correlation matrix}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{cor_cells} \hlkwb{<-} \hlkwd{cor}\hlstd{(}\hlkwd{t}\hlstd{(E}\hlopt{$}\hlstd{counts),} \hlkwc{method}\hlstd{=}\hlstr{'pearson'}\hlstd{)}
+\hlkwd{heatmap}\hlstd{(cor_cells,} \hlkwc{Rowv}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{Colv}\hlstd{=}\hlnum{NA}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.5\linewidth]{figure/cor_matrix} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{PCA}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{svd} \hlkwb{<-} \hlkwd{svd}\hlstd{(}\hlkwd{scale}\hlstd{(E}\hlopt{$}\hlstd{counts))}
+\hlstd{dsvd} \hlkwb{<-} \hlkwd{as.data.frame}\hlstd{(svd}\hlopt{$}\hlstd{u[,} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{])}
+\hlkwd{colnames}\hlstd{(dsvd)} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlstr{'pc'}\hlstd{,} \hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{ncol}\hlstd{(dsvd)))}
+\hlstd{dsvd}\hlopt{$}\hlstd{cycle} \hlkwb{<-} \hlstd{E}\hlopt{$}\hlstd{cycle}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{PC1 versus PC2}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(dsvd,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=pc1,} \hlkwc{y}\hlstd{=pc2,} \hlkwc{color}\hlstd{=cycle))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.7\linewidth]{figure/pca_12} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{PC1 versus PC3}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(dsvd,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=pc1,} \hlkwc{y}\hlstd{=pc3,} \hlkwc{color}\hlstd{=cycle))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.7\linewidth]{figure/pca_13} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Percentage of variance explained}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{ve} \hlkwb{<-} \hlstd{svd}\hlopt{$}\hlstd{d}\hlopt{^}\hlnum{2} \hlopt{/} \hlkwd{sum}\hlstd{(svd}\hlopt{$}\hlstd{d}\hlopt{^}\hlnum{2}\hlstd{)}
+\hlkwd{barplot}\hlstd{(ve[}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{],} \hlkwc{xlab}\hlstd{=}\hlstr{'Principle components'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'% Variance explained'}\hlstd{,}
+        \hlkwc{col}\hlstd{=}\hlstr{'lightblue'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.8\linewidth]{figure/pca_ve} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Percentage of variance explained}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{ggplot}\hlstd{(dsvd,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=cycle,} \hlkwc{y}\hlstd{=pc1,} \hlkwc{color}\hlstd{=cycle))} \hlopt{+} \hlkwd{geom_boxplot}\hlstd{()} \hlopt{+} \hlkwd{geom_jitter}\hlstd{(}\hlkwc{position}\hlstd{=}\hlkwd{position_jitter}\hlstd{(}\hlkwc{width}\hlstd{=}\hlnum{.1}\hlstd{))}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.7\linewidth]{figure/pca_cycle1} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+
+\end{document}

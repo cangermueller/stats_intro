@@ -1,0 +1,199 @@
+\Sexpr{set_parent('../main.Rnw')}
+
+\section{PCA}
+\begin{frame}
+\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{High-dimensional data}
+  \begin{itemize}
+    \item \alert{Small $n$ large $p$}
+    \item Few samples $n$ ($\approx 100$)
+    \item Many features $p$
+      \begin{itemize}
+        \item $> 10000$ genes
+        \item $> 27000000$ CpG sites
+      \end{itemize}
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.5\linewidth]{microarray.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Problems}
+  \begin{itemize}
+    \item High storage costs (memory)
+    \item High computational costs (time)
+    \item Visualization?
+    \item Curse of dimensionality
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.5\linewidth]{curse_dim.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Principle Component Analysis}
+  \begin{itemize}
+    \item Dimensionality reduction
+    \item Visualization
+    \item Missing values imputation
+    \item Latent factors estimation:
+      \begin{itemize}
+        \item Population structure
+        \item Batch-effects
+        \item Cell-cycle
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Principle components}
+  \begin{itemize}
+    \item Minimize projection error
+    \item Maximize variance
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.6\linewidth]{pca.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Pearson correlation coefficient}
+  \begin{itemize}
+    \item Measures \textbf{linear} dependency between $x$ and $y$
+    \item $cor(x,y) = \in \left[-1,+1\right]$
+    \item $cor(x,y) = 0$: no correlation
+    \item $cor(x,y) = -1$: negative correlation
+    \item $cor(x,y) = +1$: positive correlation
+  \end{itemize}
+  \begin{definition}[Pearson correlation coefficient]
+    \begin{align*}
+      \operatorname{cor}(x, y) = \frac{\sum_i (x_i - \bar{x})(y_i - \bar{y})}
+      {\sqrt{\sum_i (x_i - \bar{x})^2}\sqrt{\sum_i (y_i - \bar{y})^2}}
+    \end{align*}
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Pearson correlation coefficient}
+  \begin{center}
+    \includegraphics[width=0.8\linewidth]{pearson.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Spearman correlation coefficient}
+  \begin{itemize}
+    \item Measures \textbf{monotonic} dependency between $x$ and $y$
+    \item Pearson correlation coefficient on rank of variables
+    \item $cor(x,y) = \in \left[-1,+1\right]$
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=0.4\linewidth]{spearman.png}
+  \end{center}
+\end{frame}
+
+<<include=FALSE>>=
+plot_heatmap <- function(counts, n=1, key=FALSE) {
+  cell_colors <- c('red', 'green', 'blue')
+  heatmap.2(counts[, seq(1, ncol(counts), n)],
+            xlab='Genes', ylab='Cells',
+            RowSideColors=cell_colors[as.integer(esc$cycle)],
+            Rowv=FALSE, Colv=FALSE, dendrogram='none',
+            labRow=FALSE, labCol=FALSE, 
+            key=key, key.title='', key.xlab='counts', key.ylab='', keysize=1,
+            trace='none', col=topo.colors(16))
+}
+@
+
+\begin{frame}[fragile]{ESC data}
+  \begin{itemize}
+    \item Single-cell RNA-seq
+    \item $n=182$ Embryonic stem cells
+    \item $p=9571$ Genes
+    \item Cell-cycle via Hoechst staining
+  \end{itemize}
+<<heat_esc, echo=FALSE, fig.width=10, fig.height=5, out.width='.9\\linewidth'>>=
+plot_heatmap(esc$counts, 50)
+dim(esc$counts)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Correlation between two ESC}
+<<>>=
+c1 <- esc$counts[which(esc$cycle == 'G1')[1],]
+c2 <- esc$counts[which(esc$cycle == 'S')[1],]
+@
+  \begin{columns}[c]
+    \begin{column}{.5\linewidth}
+<<cor_c1_c2, fig.width=10, fig.height=9, out.width='\\linewidth'>>=
+qplot(c1, c2, xlab='G1 cell', ylab='S cell')
+@
+    \end{column}
+    \begin{column}{.5\linewidth}
+<<>>=
+cor(c1, c2,
+    method='pearson')
+cor(c1, c2,
+    method='spearman')
+@
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Correlation matrix}
+<<cor_matrix, fig.width=10, fig.height=10, out.width='.5\\linewidth'>>=
+cor_cells <- cor(t(esc$counts), method='pearson')
+heatmap(cor_cells, Rowv=NA, Colv=NA)
+@
+\end{frame}
+
+\begin{frame}[fragile]{PCA}
+<<pca_ve, fig.width=10, fig.height=6, out.width='.8\\linewidth'>>=
+svd <- svd(scale(esc$counts))
+dsvd <- as.data.frame(svd$u[, 1:10])
+colnames(dsvd) <- paste0('pc', seq(1, ncol(dsvd)))
+dsvd$cycle <- esc$cycle
+ve <- svd$d^2 / sum(svd$d^2)
+barplot(ve[1:10], xlab='Principle components', ylab='% Variance explained',
+        col='lightblue')
+@
+\end{frame}
+
+\begin{frame}[fragile]{PC1 versus PC2}
+<<pca_12, fig.width=10, fig.height=8, out.width='.7\\linewidth'>>=
+ggplot(dsvd, aes(x=pc1, y=pc2, color=cycle)) + geom_point(size=3)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Correlation PC1 and cell-cycle}
+<<pca_cycle1, fig.width=10, fig.height=8, out.width='.7\\linewidth'>>=
+ggplot(dsvd, aes(x=cycle, y=pc1, color=cycle)) + geom_boxplot() + geom_jitter(position=position_jitter(width=.1))
+@
+\end{frame}
+
+\begin{frame}[fragile]{Accounting for cell-cycle}
+<<>>=
+svd_compress <- function(svd, k=1) {
+  return (svd$u[, 1:k, drop=FALSE] %*% diag(svd$d[1:k], nrow=k) %*% t(svd$v)[1:k,, drop=FALSE])
+}
+counts_pc1 <- svd_compress(svd, 1)
+counts_npc1 <- esc$counts - counts_pc1
+@
+\end{frame}
+
+\begin{frame}[fragile]{Raw counts}
+<<heat_esc2, echo=FALSE, fig.width=10, fig.height=5, out.width='\\linewidth'>>=
+plot_heatmap(esc$counts, 50)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Counts explained by cell-cycle}
+<<heat_esc_pc1, echo=FALSE, fig.width=10, fig.height=5, out.width='\\linewidth'>>=
+plot_heatmap(counts_pc1, 50)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Counts after adjusting for cell-cycle}
+<<heat_esc_npc1, echo=FALSE, fig.width=10, fig.height=5, out.width='.9\\linewidth'>>=
+plot_heatmap(counts_npc1, 50)
+@
+\end{frame}
+
+

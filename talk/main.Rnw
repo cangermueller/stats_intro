@@ -4,252 +4,50 @@
 
 
 \usepackage{graphicx}
+\graphicspath{{../figures/}}
 \usepackage{amsmath}
+\usepackage{booktabs}
 
 \author{Christof Angermueller}
 \title{Statistics Introduction}
 \date{\today}
 
-\begin{document}
-
 <<init, include=F>>=
-opts_chunk$set(echo=T, fig.align='center', size='tiny')
-
+opts_chunk$set(echo=TRUE, fig.align='center', size='tiny')
 library(xtable)
 library(ggplot2)
+library(rhdf5)
 @
 
-\section{Variables}
-
-\begin{frame}[fragile]{Data}
-<<t1d, results='asis'>>=
-D <- read.table('../data_t1d/t1d.csv', 
+<<init_data, include=FALSE>>=
+t1d <- read.table('../data_t1d/t1d.csv', 
                 header=TRUE, sep='\t')
-xtable(D[sample(10),])
+
+esc <- list()
+for (name in c('counts', 'labels', 'het')) {
+  esc[[name]] <- h5read('../data_esc/esc.h5', name)
+}
+esc$counts <- esc$counts[, esc$het]
+esc$cycle <- factor(esc$labels, labels=c('G1', 'S', 'G2M'))
+esc$names <- paste(seq(1, length(esc$labels)), esc$cycle)
+rownames(esc$counts) <- esc$names
 @
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
 \end{frame}
 
-\begin{frame}{Types}
-  \begin{columns}[t]
-    \begin{column}{.5\linewidth}
-      \begin{exampleblock}{Discrete}
-        \begin{itemize}
-          \item $X \in \{s_1, s_2, \dots, s_n\}$
-          \item {\bf Categorical} \\ 
-            $\text{sex} \in \{\text{f}, \text{m}\}$
-          \item {\bf Ordinal} 
-            \\ $\text{age} \in \{\text{child}, \text{adult}, \text{elder}\}$
-          \item {\bf Binary} 
-            \\ $\text{european} \in \{\text{TRUE}, \text{FALSE}\}$
-          \item {\bf Integer} 
-            \\ $\text{ptpn22} \in \{0, 1, 2\}$
-        \end{itemize}
-      \end{exampleblock}
-    \end{column}
-    \begin{column}{.5\linewidth}
-      \begin{exampleblock}{Continuous}
-        \begin{itemize}
-          \item $X \in \mathbb{R}$
-          \item $\text{age} \in [0, 0.01, \dots, \inf[$
-        \end{itemize}
-      \end{exampleblock}
-    \end{column}
-  \end{columns}
-  \begin{align*}
-    \text{Categorical} < \text{Ordinal} < \text{Binary} < \text{Integer} <
-    \text{Continuous}
-  \end{align*}
-\end{frame}
-
-\begin{frame}[fragile]{Count}
-  \begin{definition}[Count]
-    \begin{itemize}
-      \item How often does $x$ appear?
-      \item Categorical variables
-    \end{itemize}
-  \end{definition}
-<<>>=
-table(D$t1d)
-table(D$sex)
-@
-\end{frame}
-
-\begin{frame}[fragile]{Median}
-  \begin{definition}[Median]
-    \begin{itemize}
-      \item Value in the middle
-      \item Ordinary variables
-    \end{itemize}
-  \end{definition}
-<<>>=
-median(D$hlacat)
-median(D$age)
-@
-\end{frame}
-
-\begin{frame}[fragile]{Quantile}
-  \begin{definition}[Quantile]
-    \begin{itemize}
-      \item $q_p(X)$ is value $x$, s.t. $q\%$ of all $y \in Y$ are smaller than $x$
-      \item $q_{0.5}(X) = \operatorname{median}(X)$
-      \item Ordinary variables
-    \end{itemize}
-  \end{definition}
-<<>>=
-quantile(D$hlacat)
-quantile(D$age)
-@
-\end{frame}
-
-\begin{frame}[fragile]{Mean}
-  \begin{definition}[Mean]
-    \begin{itemize}
-      \item $\operatorname{mean}(X) = \frac{1}{|X|}\sum_{x \in X} x$
-      \item Integer, continuous variables
-    \end{itemize}
-  \end{definition}
-<<>>=
-mean(D$age)
-@
-\end{frame}
-
-\section{Random Variables}
-
-\begin{frame}{Random Variable}
-  \begin{itemize}
-    \item A random variable $X$ has a random outcome $x \in \mathcal{D}$
-    \item $\mathcal{D}$ is the \textbf{domain} of $X$
-    \item \textbf{Discrete $X$}: $\mathcal{D} \subseteq \mathbb{Z}$, e.g. $\mathbb{D}=\{0, 1, 2, \dots\}$
-    \item \textbf{Continuous $X$}: $\mathcal{D} \subseteq \mathbb{R}$, e.g. $\mathbb{D}=[0.0, 0.1, 0.2, \dots[$
-    \item $P(X=x)$ is the \textbf{probability} that $X$ has outcome $x$
-    \item $E[X]=\sum_{x \in \mathcal{D}} P(X=x) x$ is the \textbf{expected value} of $X$
-    \item $Var[X]=\sum_{x \in \mathcal{D}} P(X=x) (x - E[X])^2$ is the \textbf{variance} of $X$
-    \item $Sd[X]=\sqrt{Var[X]}$ is the \textbf{standard deviation} of $X$
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Discrete Random Variable}
-  \begin{itemize}
-    \item $f(x) = P(X=x)$ is the \textbf{Probability Mass Function (PMF)} of $X$
-    \item $F(X) = P(X\le x)$ is the \textbf{Cumulative Distribution Function (CDF)} of $X$
-  \end{itemize}
-  \begin{exampleblock}{Examples}
-    \begin{itemize}
-      \item $\operatorname{Bernoulli}(p)$: $\mathcal{D} = \{0, 1\}$
-      \item $\operatorname{Binomial}(n, p)$: $\mathcal{D} = \{0, 1, \dots, n\}$
-      \item $\operatorname{Poisson}(\lambda)$: $\mathcal{D} = \{0, 1, \dots, +\inf\}$
-    \end{itemize}
-  \end{exampleblock}
-\end{frame}
-
-\begin{frame}[fragile]{Example}
-  \begin{itemize}
-    \item The gender $X$ with $\mathcal{D}=\{f, m\}$ can be modelled as
-      Bernoulli distributed:
-      \begin{align*}
-        X \sim \operatorname{Bernoulli}(p)
-      \end{align*}
-    \item the \textbf{Maximum Likelihood} estimator $\hat{p}$ of the rate $p$
-      of females for the T1D dataset is:
-<<>>=
-p <- sum(D$sex == 'f') / nrow(D)
-p
-@
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Example}
-  \begin{itemize}
-    \item The number of females $Y$ in a new cohort of $n=50$ people is
-      binomial distributed:
-      \begin{align*}
-        Y \sim \operatorname{Binomial}(n, p)
-      \end{align*}
-    \item Assume that $p=\hat{p}=\Sexpr{p}$ is the same as before ...
-  \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]{Example}
-  \begin{itemize}
-    \item then the probability $f(y)$ to observe $k$ females is:
-  \end{itemize}
-<<fig_bin_pdf, fig.width=10, fig.height=6, out.width='.5\\linewidth'>>=
-n <- 50
-y <- seq(0, n)
-f_y <- dbinom(y, n, p)
-d <- data.frame(x=y, y=f_y)
-ggplot(d, aes(x=x, y=y)) + geom_point(color='blue', size=3) + xlab('y') + ylab('f(y)')
-@
-\end{frame}
-
-\begin{frame}[fragile]{Example}
-  \begin{itemize}
-    \item and the probability $F(Y)$ to observe up to $k$ females:
-  \end{itemize}
-<<fig_bin_cdf, fig.width=10, fig.height=6, out.width='.5\\linewidth'>>=
-n <- 50
-y <- seq(0, n)
-F_y <- pbinom(y, n, p)
-d <- data.frame(x=y, y=F_y)
-ggplot(d, aes(x=x, y=y)) + geom_point(color='blue', size=3) + xlab('y') + ylab('F(y)')
-@
-\end{frame}
-
-\begin{frame}{Continuous Random Variable}
-  \begin{itemize}
-    \item $f(x) = P(X \in ]x-\epsilon;x+\epsilon[)$ is the \textbf{Probability Density Function (PDF)} of $X$
-    \item $F(X) = P(X\le x)$ is the \textbf{Cumulative Distribution Function (CDF)} of $X$
-  \end{itemize}
-  \begin{exampleblock}{Examples}
-    \begin{itemize}
-      \item $\operatorname{Normal}(\mu, \sigma^2)$: $\mathcal{D} = \mathbb{R}$ 
-      \item $\operatorname{Exponential}(\lambda)$: $\mathcal{D} = \mathbb{R}^+$
-      \item $\operatorname{Beta}(a, b)$: $\mathcal{D} = [0, \dots, 1]$
-    \end{itemize}
-  \end{exampleblock}
-\end{frame}
-
-\begin{frame}[fragile]{Normal distribution}
-  \begin{itemize}
-    \item $X \sim N(\mu, \sigma^2)$
-    \item $E[X]=\mu$, $Var[X]=\sigma^2$
-    \item $Z \sim N(0, 1)$ is \textbf{standard normal} distribution
-    \item $X \sim N(\mu, \sigma^2) \rightarrow \frac{X-\mu}{\sigma} \sim N(0,1)$
-  \end{itemize}
-<<normal, fig.width=10, fig.height=6, out.width='.6\\linewidth'>>=
-x <- seq(-10, 10, len=100)
-y <- dnorm(x, mean=0, sd=1.0)
-d <- data.frame(x=x, y=y)
-ggplot(d, aes(x=x, y=y)) + geom_line(color='blue', size=2) + xlab('x') + ylab('f(x)')
-@
-\end{frame}
-
-\begin{frame}[fragile]{Example}
-  \begin{itemize}
-    \item How is the \textbf{age} distributed in the T1D cohort?
-  \end{itemize}
-<<hist_age, fig.width=10, fig.height=6, out.width='.8\\linewidth'>>=
-hist(D$age, col='grey', xlab='Age', ylab='Density', prob=TRUE, main=NULL, ylim=c(0, 0.12))
-@
-\end{frame}
-
-\begin{frame}[fragile]{Example}
-  \begin{itemize}
-    \item Estimate $\mu$ and $\sigma$ via maximum likelihood:
-  \end{itemize}
-<<hist_normal_,k-age, fig.width=10, fig.height=6, out.width='.8\\linewidth'>>=
-mu <- mean(D$age)
-sigma <- sd(D$age)
-x <- seq(min(D$age), max(D$age), len=100)
-y <- dnorm(x, mean=mu, sd=sigma)
-hist(D$age, col='grey', xlab='Age', ylab='Density', prob=TRUE, main=NULL, ylim=c(0, 0.12))
-lines(x, y, col='blue', lwd=3)
-@
+\begin{frame}
+  \tableofcontents 
 \end{frame}
 
 
+%\Sexpr{knit_child('intro/main.Rnw')}
+%\Sexpr{knit_child('var/main.Rnw')}
+%\Sexpr{knit_child('ht/main.Rnw')}
+\Sexpr{knit_child('pca/main.Rnw')}
+%\Sexpr{knit_child('clust/main.Rnw')}
 
 \end{document}
- 
-\begin{frame}[fragile]{Median}
-\end{frame}

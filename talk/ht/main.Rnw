@@ -1,0 +1,126 @@
+\Sexpr{set_parent('../main.Rnw')}
+
+\section{Hypothesis testing}
+\begin{frame}
+\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Overview}
+  \begin{itemize}
+    \item How are $X$ and $Y$ related?
+    \item $X$: input variable, explanatory variable, covariates
+    \item $Y$: output variable, target variable
+    \item Is the relationship significant?
+  \end{itemize}
+  \begin{definition}[Hypothesis testing]
+    \begin{description}
+      \item[$H0$] Null hypothesis - which we want to reject
+      \item[$\alpha$] Probability to reject $H0$, although it is true (FPR)
+      \item[$1-\alpha$] Confidence level
+      \item[p-value] Probability to make an observation at least as extreme as
+        the one we did, given that $H0$ is true
+      \item[$\text{p-value} < \alpha$] Rejection criterion
+    \end{description}
+  \end{definition}
+\end{frame}
+
+\begin{frame}{Overview}
+  \begin{table}
+    \begin{tabular}{c|c|c}
+      \toprule
+      & \textbf{Discrete} & \textbf{Continuous} \\ \hline
+      \textbf{Discrete} & Score test & Z test \\
+      & Fisher's exact test & Student's t test \\
+      & $\chi^2$ test & \\
+      & Logistic regression & \\ \hline
+      \textbf{Continuous} & \textit{Descretize} & Correlation \\
+      &  & Linear regression \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}[fragile]{Example: testing two proportions}
+  \begin{itemize}
+    \item Are females more likely to develop T1D than males?
+  \end{itemize}
+<<tab_sex_t1d, results='asis'>>=
+sex_t1d <- table(t1d$sex, relevel(t1d$t1d, 'yes'))
+xtable(sex_t1d)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Score test}
+<<test_prop>>=
+prop.test(sex_t1d, conf.level=0.95, alternative='two.sided')
+@
+\end{frame}
+
+\begin{frame}[fragile]{Fisher's exact test}
+<<test_fisher>>=
+fisher.test(sex_t1d, conf.level=0.95, alternative='two.sided')
+@
+\end{frame}
+
+\begin{frame}[fragile]{Example: comparing means}
+  \begin{itemize}
+    \item Are females significantly older than males?
+  \end{itemize}
+<<plot_age, fig.width=10, fig.height=5, out.width='.8\\linewidth'>>=
+ggplot(t1d) + geom_density(aes(x=age, y=..density.., group=sex, fill=sex, color=sex), alpha=.5)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Student's t test}
+<<>>=
+t.test(t1d$age[t1d$sex == 'f'], t1d$age[t1d$sex == 'm'], alternative='greater')
+@
+\end{frame}
+
+\begin{frame}[fragile]{ANOVA}
+  \begin{itemize}
+    \item Does PTPN22 influence the risk of T1D?
+  \end{itemize}
+<<plot_ptpn22, fig.width=10, fig.height=5, out.width='.6\\linewidth'>>=
+table(t1d$ptpn22, t1d$t1d)
+ggplot(t1d) + geom_bar(aes(x=ptpn22, fill=t1d), position='fill') +
+scale_x_discrete(limits=c(0, 2)) + xlab('Risk level') + ylab('Proportion')
+@
+\end{frame}
+
+\begin{frame}[fragile]{ANOVA}
+  \begin{itemize}
+    \item Fitting logistic regression model
+  \end{itemize}
+<<glm_ptpn22, results='asis'>>=
+model <- glm(t1d ~ factor(ptpn22), data=t1d, family=binomial)
+xtable(model)
+@
+\end{frame}
+
+\begin{frame}[fragile]{ANOVA}
+  \begin{itemize}
+    \item Likelihood Ratio Test
+  \end{itemize}
+<<>>=
+anova(model, test='LRT')
+@
+\end{frame}
+
+\begin{frame}[fragile]{Logistic Regression}
+  \begin{itemize}
+    \item Testing all variables
+  \end{itemize}
+<<glm_all, results='asis', cache=TRUE>>=
+model <- glm(t1d ~ .-(european), data=t1d, family=binomial)
+xtable(model)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Logistic Regression}
+<<glm_all_lor, fig.width=10, fig.height=5, out.width='.9\\linewidth'>>=
+lor <- sort(coef(model)[-1], decreasing=TRUE)
+barplot(lor, las=2, col='lightblue', ylab='Log-odds ratio')
+@
+\end{frame}
+

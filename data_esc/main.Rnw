@@ -1,0 +1,35 @@
+\documentclass[a4paper]{article} \usepackage{graphicx} \usepackage{geometry} \geometry{a4paper, left=25mm, right=25mm, top=30mm, bottom=30mm} \usepackage[colorlinks=true, linkcolor=blue]{hyperref} \author{Angermuller Christof}
+\title{Prepare ESC data for practical}
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+
+<<init, include=T>>=
+set.seed(0)
+library(rhdf5)
+opts_chunk$set(echo=T, fig.align='center')
+@
+
+<<data_read>>=
+filename <- '../data_raw/normCountsESC_Filter.h5f'
+D <- list()
+D$counts <- t(h5read(filename, 'LogNcountsMmus'))
+D$labels <- h5read(filename, 'labels')
+D$het <- h5read(filename, 'genes_heterogen')
+D$het[is.na(D$het)] <- 0
+D$het = D$het == 1
+@
+
+<<data_write>>=
+filename <- 'esc.h5'
+file.remove(filename)
+h5createFile(filename)
+for (name in names(D)) {
+  h5write(D[[name]], filename, name)
+}
+
+@
+
+\end{document}
