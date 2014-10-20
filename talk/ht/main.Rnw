@@ -1,30 +1,56 @@
-\Sexpr{set_parent('../main.Rnw')}
-
 \section{Hypothesis testing}
 \begin{frame}
 \tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{Overview}
+\begin{frame}{Relationship between variables}
   \begin{itemize}
     \item How are $X$ and $Y$ related?
     \item $X$: input variable, explanatory variable, covariates
     \item $Y$: output variable, target variable
     \item Is the relationship significant?
   \end{itemize}
-  \begin{definition}[Hypothesis testing]
-    \begin{description}
-      \item[$H0$] Null hypothesis - which we want to reject
-      \item[$\alpha$] Probability to reject $H0$, although it is true (FPR)
-      \item[$1-\alpha$] Confidence level
-      \item[p-value] Probability to make an observation at least as extreme as
-        the one we did, given that $H0$ is true
-      \item[$\text{p-value} < \alpha$] Rejection criterion
-    \end{description}
-  \end{definition}
 \end{frame}
 
-\begin{frame}{Overview}
+\begin{frame}{Process}
+  \begin{enumerate}
+    \item Define hypothesis
+      \begin{itemize}
+        \item One-sided: $\mu < \mu_0$, $\mu > \mu_0$
+        \item Two-sides: $\mu = \mu_0$
+      \end{itemize}
+    \item Defined region of rejection $\mathcal{R}_\alpha$ depending on
+      significance level $\alpha$
+    \item Collect data $\mathcal{D}$
+    \item Compute test statistic $T_\mathcal{D}$ for data $\mathcal{D}$
+    \item Reject $H_0$ if $T_\mathcal{D} \notin R_\alpha$
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Process}
+  \begin{center}
+    \includegraphics[width=.9\linewidth]{ht.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Type-1 and Type-2 error}
+  \begin{table}
+    \begin{tabular}{c|c|c}
+      \toprule
+      & \textbf{No reject} & \textbf{Reject} \\ \hline
+      \textbf{$H_0$ true} & True Negative (TN) & {\color{blue} False Positive (FP)} \\
+      & & {\color{blue} Type-1 error, $\alpha$} \\
+      \textbf{$H_0$ false} & {\color{red} False Negative (FN)} & True Positive (TP) \\
+      &  {\color{red}  Type-2 error, $\beta$} & \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+  \begin{center}
+    \includegraphics[width=.5\linewidth]{ht_error.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Overview hypothesis tests}
   \begin{table}
     \begin{tabular}{c|c|c}
       \toprule
@@ -40,10 +66,30 @@
   \end{table}
 \end{frame}
 
-\begin{frame}[fragile]{Example: testing two proportions}
+\begin{frame}{p-value}
+  \begin{center}
+    \Large
+    What is a p-value?
+  \end{center}
+\end{frame}
+
+\begin{frame}{p-value}
+  \begin{definition}[p-value]
+    Probability to observe by chance a test statistic $T'$ that is at least as extreme as the observed test statistic $T_\mathcal{D}$, given that $H_0$ is true.
+  \end{definition}
+\end{frame}
+
+\begin{frame}[fragile]{Testing two proportions}
   \begin{itemize}
     \item Are females more likely to develop T1D than males?
   \end{itemize}
+  \begin{align*}
+    X_f \sim \text{Bernoulli}(p_f) \quad X_m \sim \text{Bernoulli}(p_m)
+  \end{align*}
+  \begin{align*}
+    H0: p_f = p_m
+  \end{align*}
+  \small
 <<tab_sex_t1d, results='asis'>>=
 sex_t1d <- table(t1d$sex, relevel(t1d$t1d, 'yes'))
 xtable(sex_t1d)
@@ -54,18 +100,34 @@ xtable(sex_t1d)
 <<test_prop>>=
 prop.test(sex_t1d, conf.level=0.95, alternative='two.sided')
 @
+  \begin{itemize}
+    \item Depends on central limit theorem
+    \item Requires many samples
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]{Fisher's exact test}
 <<test_fisher>>=
 fisher.test(sex_t1d, conf.level=0.95, alternative='two.sided')
 @
+  \begin{itemize}
+    \item Does not depend on central limit theorem
+    \item Does not require many samples
+    \item Exact test: guarantees false positive rate
+    \item Sometime too conservative
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Example: comparing means}
+\begin{frame}[fragile]{Comparing means}
   \begin{itemize}
     \item Are females significantly older than males?
   \end{itemize}
+  \begin{align*}
+    X_f \sim \mathcal{N}(\mu_f, \sigma^2) \quad X_m \sim \mathcal{N}(\mu_m, \sigma^2)
+  \end{align*}
+  \begin{align*}
+    H0: \mu_f < \mu_m
+  \end{align*}
 <<plot_age, fig.width=10, fig.height=5, out.width='.8\\linewidth'>>=
 ggplot(t1d) + geom_density(aes(x=age, y=..density.., group=sex, fill=sex, color=sex), alpha=.5)
 @
@@ -77,10 +139,20 @@ t.test(t1d$age[t1d$sex == 'f'], t1d$age[t1d$sex == 'm'], alternative='greater')
 @
 \end{frame}
 
-\begin{frame}[fragile]{ANOVA}
+\begin{frame}[fragile]{Testing dependency between variables}
   \begin{itemize}
     \item Does PTPN22 influence the risk of T1D?
   \end{itemize}
+  \begin{align*}
+    X_\text{PTPN22} \sim \text{Cat}(\{0, 1, 2\}) \quad
+    X_\text{T1D} \sim \text{Bernoulli}(p)
+  \end{align*}
+  \begin{align*}
+    H0: X_\text{PTPN22} \text{ independent of } X_\text{T1D}
+  \end{align*}
+\end{frame}
+
+\begin{frame}[fragile]{Testing dependency between variables}
 <<plot_ptpn22, fig.width=10, fig.height=5, out.width='.6\\linewidth'>>=
 table(t1d$ptpn22, t1d$t1d)
 ggplot(t1d) + geom_bar(aes(x=ptpn22, fill=t1d), position='fill') +
@@ -88,7 +160,7 @@ scale_x_discrete(limits=c(0, 2)) + xlab('Risk level') + ylab('Proportion')
 @
 \end{frame}
 
-\begin{frame}[fragile]{ANOVA}
+\begin{frame}[fragile]{Testing dependency between variables}
   \begin{itemize}
     \item Fitting logistic regression model
   \end{itemize}
@@ -98,7 +170,7 @@ xtable(model)
 @
 \end{frame}
 
-\begin{frame}[fragile]{ANOVA}
+\begin{frame}[fragile]{Testing dependency between variables}
   \begin{itemize}
     \item Likelihood Ratio Test
   \end{itemize}
@@ -107,9 +179,24 @@ anova(model, test='LRT')
 @
 \end{frame}
 
-\begin{frame}[fragile]{Logistic Regression}
+\begin{frame}[fragile]{Testing dependency between variables}
   \begin{itemize}
-    \item Testing all variables
+    \item Does PTPN22 influence the risk of T1D, accounting for all other
+      variables?
+  \end{itemize}
+  \begin{align*}
+    X_\text{PTPN22} \sim \text{Cat}(\{0, 1, 2\}) \quad
+    X_\text{T1D} \sim \text{Bernoulli}(p)
+  \end{align*}
+  \begin{align*}
+    H0: X_\text{PTPN22} \text{ independent of } X_\text{T1D} 
+    \text{, accounting for } X_\text{age}, X_\text{ERBB3}, X_\text{IL10}, \dots
+  \end{align*}
+\end{frame}
+
+\begin{frame}[fragile]{Testing dependency between variables}
+  \begin{itemize}
+    \item Fitting logistic regression model
   \end{itemize}
 <<glm_all, results='asis', cache=TRUE>>=
 model <- glm(t1d ~ .-(european), data=t1d, family=binomial)
@@ -117,7 +204,7 @@ xtable(model)
 @
 \end{frame}
 
-\begin{frame}[fragile]{Logistic Regression}
+\begin{frame}[fragile]{Testing dependency between variables}
 <<glm_all_lor, fig.width=10, fig.height=5, out.width='.9\\linewidth'>>=
 lor <- sort(coef(model)[-1], decreasing=TRUE)
 barplot(lor, las=2, col='lightblue', ylab='Log-odds ratio')

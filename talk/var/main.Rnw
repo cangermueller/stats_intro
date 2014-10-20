@@ -1,5 +1,3 @@
-\Sexpr{set_parent('../main.Rnw')}
-
 \section{Descriptive statistics}
 \begin{frame}
 \tableofcontents[currentsection]

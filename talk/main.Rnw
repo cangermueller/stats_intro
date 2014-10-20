@@ -17,10 +17,11 @@ opts_chunk$set(echo=TRUE, fig.align='center', size='tiny')
 library(xtable)
 library(ggplot2)
 library(rhdf5)
+library(gplots)
 @
 
 <<init_data, include=FALSE>>=
-t1d <- read.table('../data_t1d/t1d.csv', 
+t1d <- read.table('../data_t1d/t1d.csv',
                 header=TRUE, sep='\t')
 
 esc <- list()
@@ -44,10 +45,11 @@ rownames(esc$counts) <- esc$names
 \end{frame}
 
 
-%\Sexpr{knit_child('intro/main.Rnw')}
-%\Sexpr{knit_child('var/main.Rnw')} 
+\Sexpr{knit_child('intro/main.Rnw')}
+\Sexpr{knit_child('var/main.Rnw')}
 \Sexpr{knit_child('ht/main.Rnw')}
-%\Sexpr{knit_child('pca/main.Rnw')}
-%\Sexpr{knit_child('clust/main.Rnw')}
+\Sexpr{knit_child('pca/main.Rnw')}
+\include{appendix}
+
 
 \end{document}

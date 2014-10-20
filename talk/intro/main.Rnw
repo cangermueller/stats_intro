@@ -1,8 +1,13 @@
-\Sexpr{set_parent('../main.Rnw')}
-
 \section{Introduction}
-\begin{frame}
-\tableofcontents[currentsection]
+
+\begin{frame}{About me}
+  \begin{itemize}
+    \item 2nd year PhD student EMBL-EBI
+    \item Supervisor: Oliver Stegle
+    \item Machine learning, Statistics, Biological data analysis
+    \item @cangermueller
+    \item \url{http://cangermueller.com}
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Sequencing costs}
@@ -29,7 +34,7 @@
 \begin{frame}{Why should I care about statistics?}
   \begin{itemize}
     \item Because you can analyse your own data
-    \item Because it allows you to tap the reservoir of biological da
+    \item Because it allows you to tap the reservoir of biological data
     \item Because it increases your chance to find a job after your PhD
     \item Because it is fun!
   \end{itemize}

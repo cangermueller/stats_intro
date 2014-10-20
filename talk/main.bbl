@@ -1,0 +1,27 @@
+\begin{thebibliography}{Ros11}
+
+\bibitem[BB07]{balding_handbook_2007}
+David~J. Balding and Christopher~M Bishop.
+\newblock {\em Handbook of statistical genetics}.
+\newblock Wiley, Chichester [u.a.], 2007.
+
+\bibitem[Coua]{coursera_data_????}
+Coursera.
+\newblock Data analysis and statistical inference.
+
+\bibitem[Coub]{coursera_mathematical_????}
+Coursera.
+\newblock Mathematical biostatistics boot camp 1.
+
+\bibitem[Ros11]{rosner_fundamentals_2011}
+Bernard Rosner.
+\newblock {\em Fundamentals of biostatistics}.
+\newblock Brooks/Cole, Cengage Learning, Boston, 2011.
+
+\bibitem[Sha13]{shalizi_advanced_2013}
+Cosma~Rohilla Shalizi.
+\newblock Advanced data analysis from an elementary point of view.
+\newblock {\em Preprint of book found at http://www. stat. cmu. edu/
+  cshalizi/{ADAfaEPoV}}, 2013.
+
+\end{thebibliography}

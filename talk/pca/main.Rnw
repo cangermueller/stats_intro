@@ -1,5 +1,3 @@
-\Sexpr{set_parent('../main.Rnw')}
-
 \section{PCA}
 \begin{frame}
 \tableofcontents[currentsection]
@@ -102,7 +100,7 @@ plot_heatmap <- function(counts, n=1, key=FALSE) {
 }
 @
 
-\begin{frame}[fragile]{ESC data}
+\begin{frame}[fragile]{Embryonic Stem Cell (ESC) data}
   \begin{itemize}
     \item Single-cell RNA-seq
     \item $n=182$ Embryonic stem cells
@@ -111,7 +109,6 @@ plot_heatmap <- function(counts, n=1, key=FALSE) {
   \end{itemize}
 <<heat_esc, echo=FALSE, fig.width=10, fig.height=5, out.width='.9\\linewidth'>>=
 plot_heatmap(esc$counts, 50)
-dim(esc$counts)
 @
 \end{frame}
 
