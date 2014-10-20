@@ -40,14 +40,14 @@ rownames(esc$counts) <- esc$names
 \end{frame}
 
 \begin{frame}
-  \tableofcontents 
+  \tableofcontents
 \end{frame}
 
 
 %\Sexpr{knit_child('intro/main.Rnw')}
-%\Sexpr{knit_child('var/main.Rnw')}
-%\Sexpr{knit_child('ht/main.Rnw')}
-\Sexpr{knit_child('pca/main.Rnw')}
+%\Sexpr{knit_child('var/main.Rnw')} 
+\Sexpr{knit_child('ht/main.Rnw')}
+%\Sexpr{knit_child('pca/main.Rnw')}
 %\Sexpr{knit_child('clust/main.Rnw')}
 
 \end{document}

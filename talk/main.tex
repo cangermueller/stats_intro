@@ -73,211 +73,334 @@
 \end{frame}
 
 \begin{frame}
-  \tableofcontents 
+  \tableofcontents
 \end{frame}
 
 
 %knit_child('intro/main.Rnw')
-%knit_child('var/main.Rnw')
-%knit_child('ht/main.Rnw')
 
 
 
-\section{PCA}
+\section{Descriptive statistics}
 \begin{frame}
 \tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{High-dimensional data}
+\begin{frame}{Statistical inference}
+  \begin{center}
+    \includegraphics[width=.7\linewidth]{inference.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Type-1 Diabetes (T1D) data}
   \begin{itemize}
-    \item \alert{Small $n$ large $p$}
-    \item Few samples $n$ ($\approx 100$)
-    \item Many features $p$
+    \item $9627$ samples from human population
+    \item Classified as diabetic or non-diabetic
+    \item Genotyped for T1D risk genes
+  \end{itemize}
+  \tiny
+\begin{kframe}
+\begin{alltt}
+\hlkwd{xtable}\hlstd{(t1d[}\hlkwd{sample}\hlstd{(}\hlkwd{nrow}\hlstd{(t1d))[}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{],])}
+\end{alltt}
+\end{kframe}% latex table generated in R 3.1.1 by xtable 1.7-4 package
+% Mon Oct 20 09:53:02 2014
+\begin{table}[ht]
+\centering
+\begin{tabular}{rlrlrlrrrrrr}
+  \hline
+ & t1d & hlacat & sex & age & european & ptpn22 & il10 & ctla4 & bach2 & erbb3 & gab3 \\ 
+  \hline
+5595 & yes &   3 & f & 8.84 & TRUE &   1 &   1 &   2 &   0 &   1 &   1 \\ 
+  682 & yes &   6 & f & 11.13 & TRUE &   1 &   2 &   2 &   1 &   0 &   0 \\ 
+  7182 & yes &   2 & m & 4.85 & TRUE &   0 &   2 &   1 &   1 &   1 &   0 \\ 
+  9297 & no &   1 & f & 9.80 & TRUE &   0 &   1 &   2 &   2 &   1 &   0 \\ 
+  8139 & yes &   1 & f & 8.09 & TRUE &   0 &   2 &   1 &   0 &   2 &   0 \\ 
+  7620 & no &   2 & f & 6.44 & TRUE &   0 &   1 &   1 &   1 &   2 &   0 \\ 
+  1564 & yes &   6 & m & 11.04 & TRUE &   0 &   2 &   1 &   0 &   1 &   0 \\ 
+  1195 & yes &   6 & f & 13.89 & TRUE &   1 &   2 &   2 &   1 &   2 &   1 \\ 
+  7361 & yes &   2 & m & 6.02 & TRUE &   1 &   2 &   1 &   0 &   0 &   0 \\ 
+  2 & yes &   6 & m & 6.64 & TRUE &   0 &   2 &   1 &   2 &   0 &   0 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+\end{frame}
+
+\begin{frame}{T1D variables}
+  \begin{itemize}
+    \item $Y$: \textbf{Output variable}, \textbf{target variable}
       \begin{itemize}
-        \item $> 10000$ genes
-        \item $> 27000000$ CpG sites
+        \item T1D yes or no
+      \end{itemize}
+    \item $X_i$: \textbf{Input variables}, \textbf{explanatory variables}, 
+      \textbf{covariates}
+      \begin{itemize}
+        \item Sex
+        \item Age
+        \item European
+        \item PTPN22, IL10, CTLA4, ...
       \end{itemize}
   \end{itemize}
-  \begin{center}
-    \includegraphics[width=.5\linewidth]{microarray.jpg}
-  \end{center}
 \end{frame}
 
-\begin{frame}{Problems}
-  \begin{itemize}
-    \item High storage costs (memory)
-    \item High computational costs (time)
-    \item Visualization?
-    \item Curse of dimensionality
-  \end{itemize}
-  \begin{center}
-    \includegraphics[width=.5\linewidth]{curse_dim.jpg}
-  \end{center}
-\end{frame}
-
-\begin{frame}{Principle Component Analysis}
-  \begin{itemize}
-    \item Dimensionality reduction
-    \item Visualization
-    \item Missing values imputation
-    \item Latent factors estimation:
-      \begin{itemize}
-        \item Population structure
-        \item Batch-effects
-        \item Cell-cycle
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Principle components}
-  \begin{itemize}
-    \item Minimize projection error
-    \item Maximize variance
-  \end{itemize}
-  \begin{center}
-    \includegraphics[width=.6\linewidth]{pca.jpg}
-  \end{center}
-\end{frame}
-
-\begin{frame}{Pearson correlation coefficient}
-  \begin{itemize}
-    \item Measures \textbf{linear} dependency between $x$ and $y$
-    \item $cor(x,y) = \in \left[-1,+1\right]$
-    \item $cor(x,y) = 0$: no correlation
-    \item $cor(x,y) = -1$: negative correlation
-    \item $cor(x,y) = +1$: positive correlation
-  \end{itemize}
-  \begin{definition}[Pearson correlation coefficient]
-    \begin{align*}
-      \operatorname{cor}(x, y) = \frac{\sum_i (x_i - \bar{x})(y_i - \bar{y})}
-      {\sqrt{\sum_i (x_i - \bar{x})^2}\sqrt{\sum_i (y_i - \bar{y})^2}}
-    \end{align*}
-  \end{definition}
-\end{frame}
-
-\begin{frame}{Pearson correlation coefficient}
-  \begin{center}
-    \includegraphics[width=0.8\linewidth]{pearson.png}
-  \end{center}
-\end{frame}
-
-\begin{frame}{Spearman correlation coefficient}
-  \begin{itemize}
-    \item Measures \textbf{monotonic} dependency between $x$ and $y$
-    \item Pearson correlation coefficient on rank of variables
-    \item $cor(x,y) = \in \left[-1,+1\right]$
-  \end{itemize}
-  \begin{center}
-    \includegraphics[width=0.4\linewidth]{spearman.png}
-  \end{center}
-\end{frame}
-
-
-
-\begin{frame}[fragile]{ESC data}
-  \begin{itemize}
-    \item Single-cell RNA-seq
-    \item $n=182$ Embryonic stem cells
-    \item $p=9571$ Genes
-    \item Cell-cycle via Hoechst staining
-  \end{itemize}
-\begin{knitrout}\tiny
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-
-{\centering \includegraphics[width=.9\linewidth]{figure/heat_esc} 
-
-}
-
-
-\begin{kframe}\begin{verbatim}
-## [1]  182 9571
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-\end{frame}
-
-\begin{frame}[fragile]{Correlation between two ESC}
-\begin{knitrout}\tiny
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlstd{c1} \hlkwb{<-} \hlstd{esc}\hlopt{$}\hlstd{counts[}\hlkwd{which}\hlstd{(esc}\hlopt{$}\hlstd{cycle} \hlopt{==} \hlstr{'G1'}\hlstd{)[}\hlnum{1}\hlstd{],]}
-\hlstd{c2} \hlkwb{<-} \hlstd{esc}\hlopt{$}\hlstd{counts[}\hlkwd{which}\hlstd{(esc}\hlopt{$}\hlstd{cycle} \hlopt{==} \hlstr{'S'}\hlstd{)[}\hlnum{1}\hlstd{],]}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-  \begin{columns}[c]
-    \begin{column}{.5\linewidth}
-\begin{knitrout}\tiny
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{qplot}\hlstd{(c1, c2,} \hlkwc{xlab}\hlstd{=}\hlstr{'G1 cell'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'S cell'}\hlstd{)}
-\end{alltt}
-\end{kframe}
-
-{\centering \includegraphics[width=\linewidth]{figure/cor_c1_c2} 
-
-}
-
-
-
-\end{knitrout}
+\begin{frame}{Types of variables}
+  \begin{columns}[t]
+    \begin{column}{.45\linewidth}
+      \begin{exampleblock}{Discrete}
+        \begin{itemize}
+          \item $X \in \{s_1, s_2, \dots, s_n\}$
+          \item {\bf Binary} 
+            \\ $\text{european} \in \{\text{TRUE}, \text{FALSE}\}$
+          \item {\bf Categorical} \\ 
+            $\text{sex} \in \{\text{f}, \text{m}\}$
+          \item {\bf Ordinal} 
+            \\ $\text{age} \in \{\text{child}, \text{adult}, \text{elder}\}$
+          \item {\bf Integer} 
+            \\ $\text{ptpn22} \in \{0, 1, 2\}$
+        \end{itemize}
+      \end{exampleblock}
     \end{column}
-    \begin{column}{.5\linewidth}
+    \begin{column}{.45\linewidth}
+      \begin{exampleblock}{Continuous}
+        \begin{itemize}
+          \item $X \in \mathbb{R}$
+          \item $\text{age} \in [0, 0.01, \dots, \inf[$
+        \end{itemize}
+      \end{exampleblock}
+    \end{column}
+  \end{columns}
+  \begin{align*}
+    \text{Binary} < \text{Categorical} < \text{Ordinal} < \text{Integer} <
+    \text{Continuous}
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Operations on variables}
+  \begin{description}
+    \item[Count] Binary, categorical, ordinal, integer, continuous
+    \item[Median] Ordinal, integer, continuous
+    \item[Median] Ordinal, integer, continuous
+    \item[Mean] Integer, continuous
+  \end{description}
+\end{frame}
+
+\begin{frame}[fragile]{Count}
+  \begin{definition}[Count]
+    \begin{itemize}
+      \item How often does $x$ appear?
+      \item Binary, categorical, ordinal, integer, continuous
+    \end{itemize}
+  \end{definition}
 \begin{knitrout}\tiny
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{cor}\hlstd{(c1, c2,}
-    \hlkwc{method}\hlstd{=}\hlstr{'pearson'}\hlstd{)}
+\hlkwd{table}\hlstd{(t1d}\hlopt{$}\hlstd{t1d)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.5475
+## 
+##   no  yes 
+## 1766 7861
 \end{verbatim}
 \begin{alltt}
-\hlkwd{cor}\hlstd{(c1, c2,}
-    \hlkwc{method}\hlstd{=}\hlstr{'spearman'}\hlstd{)}
+\hlkwd{table}\hlstd{(t1d}\hlopt{$}\hlstd{sex)}
 \end{alltt}
 \begin{verbatim}
-## [1] 0.5786
+## 
+##    f    m 
+## 4721 4906
 \end{verbatim}
 \end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Median}
+  \begin{definition}[Median]
+    \begin{itemize}
+      \item Value in the middle
+      \item Ordinal, integer, continuous
+    \end{itemize}
+  \end{definition}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{median}\hlstd{(t1d}\hlopt{$}\hlstd{hlacat)}
+\end{alltt}
+\begin{verbatim}
+## [1] 3
+\end{verbatim}
+\begin{alltt}
+\hlkwd{median}\hlstd{(t1d}\hlopt{$}\hlstd{age)}
+\end{alltt}
+\begin{verbatim}
+## [1] 7.99
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Quantile}
+  \begin{definition}[Quantile]
+    \begin{itemize}
+      \item $q_p(X)$ is value $x$, s.t. $q\%$ of all $y \in Y$ are smaller than $x$
+      \item $q_{0.5}(X) = \operatorname{median}(X)$
+      \item Ordinal, integer, continuous
+    \end{itemize}
+  \end{definition}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{quantile}\hlstd{(t1d}\hlopt{$}\hlstd{hlacat)}
+\end{alltt}
+\begin{verbatim}
+##   0%  25%  50%  75% 100% 
+##    1    2    3    6    6
+\end{verbatim}
+\begin{alltt}
+\hlkwd{quantile}\hlstd{(t1d}\hlopt{$}\hlstd{age)}
+\end{alltt}
+\begin{verbatim}
+##     0%    25%    50%    75%   100% 
+##  0.000  5.234  7.990 10.674 22.138
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Mean}
+  \begin{definition}[Mean]
+    \begin{itemize}
+      \item $\operatorname{mean}(X) = \frac{1}{|X|}\sum_{x \in X} x$
+      \item Integer, continuous variables
+    \end{itemize}
+  \end{definition}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{mean}\hlstd{(t1d}\hlopt{$}\hlstd{age)}
+\end{alltt}
+\begin{verbatim}
+## [1] 7.976
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+
+\begin{frame}{Random variable}
+  \begin{itemize}
+    \item A random variable $X$ has a random outcome $x \in \mathcal{D}$
+    \item $\mathcal{D}$ is the \textbf{domain} of $X$
+    \item \textbf{Discrete $X$}: $\mathcal{D} \subseteq \mathbb{Z}$, e.g. $\mathbb{D}=\{0, 1, 2, \dots\}$
+    \item \textbf{Continuous $X$}: $\mathcal{D} \subseteq \mathbb{R}$, e.g. $\mathbb{D}=[0.0, 0.1, 0.2, \dots[$
+    \item $P(X=x)$ is the \textbf{probability} that $X$ has outcome $x$
+    \item $E[X]=\sum_{x \in \mathcal{D}} P(X=x) x$ is the \textbf{expected value} of $X$
+    \item $Var[X]=\sum_{x \in \mathcal{D}} P(X=x) (x - E[X])^2$ is the \textbf{variance} of $X$
+    \item $Sd[X]=\sqrt{Var[X]}$ is the \textbf{standard deviation} of $X$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Discrete Random Variable}
+  \begin{itemize}
+    \item $f(x) = P(X=x)$ is the \textbf{Probability Mass Function (PMF)} of $X$
+    \item $F(X) = P(X\le x)$ is the \textbf{Cumulative Distribution Function (CDF)} of $X$
+  \end{itemize}
+  \begin{exampleblock}{Examples}
+    \begin{itemize}
+      \item $\operatorname{Bernoulli}(p)$: $\mathcal{D} = \{0, 1\}$
+      \item $\operatorname{Binomial}(n, p)$: $\mathcal{D} = \{0, 1, \dots, n\}$
+      \item $\operatorname{Poisson}(\lambda)$: $\mathcal{D} = \{0, 1, \dots, +\inf\}$
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Bernoulli distribution}
+  \begin{itemize}
+    \item The gender $X$ with $\mathcal{D}=\{f, m\}$ can be modelled as
+      Bernoulli distributed:
+  \end{itemize}
+  \begin{columns}
+    \begin{column}{.5\linewidth}
+      \begin{align*}
+        X \sim \operatorname{Bernoulli}(p)
+      \end{align*}
+      \begin{align*}
+        E[X] = p
+      \end{align*}
+      \begin{align*}
+        Var[X] = p(1-p)
+      \end{align*}
+    \end{column}
+    \begin{column}{0.5\linewidth}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{p} \hlkwb{<-} \hlnum{0.65}
+\hlstd{exp} \hlkwb{<-} \hlstd{p}
+\hlstd{samples} \hlkwb{<-} \hlkwd{rbinom}\hlstd{(}\hlnum{100}\hlstd{,} \hlnum{1}\hlstd{, p)}
+\hlkwd{hist}\hlstd{(samples,} \hlkwc{col}\hlstd{=}\hlstr{'lightblue'}\hlstd{,} \hlkwc{main}\hlstd{=}\hlstr{''}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{''}\hlstd{)}
+\hlkwd{abline}\hlstd{(}\hlkwc{v}\hlstd{=exp,} \hlkwc{col}\hlstd{=}\hlstr{'red'}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\linewidth]{figure/hist_bernoulli} 
+
+}
+
+
+
 \end{knitrout}
     \end{column}
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Correlation matrix}
+\begin{frame}[fragile]{Bernoulli distribution}
+  \begin{itemize}
+    \item What is the rate $p$ of females?
+    \item The \textbf{maximum likelihood} estimator $\hat{p}$ of $p$ is:
+      \begin{align*}
+        \hat{p}=\frac{1}{n}\sum_i x_i
+      \end{align*}
 \begin{knitrout}\tiny
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{cor_cells} \hlkwb{<-} \hlkwd{cor}\hlstd{(}\hlkwd{t}\hlstd{(esc}\hlopt{$}\hlstd{counts),} \hlkwc{method}\hlstd{=}\hlstr{'pearson'}\hlstd{)}
-\hlkwd{heatmap}\hlstd{(cor_cells,} \hlkwc{Rowv}\hlstd{=}\hlnum{NA}\hlstd{,} \hlkwc{Colv}\hlstd{=}\hlnum{NA}\hlstd{)}
+\hlstd{p} \hlkwb{<-} \hlkwd{sum}\hlstd{(t1d}\hlopt{$}\hlstd{sex} \hlopt{==} \hlstr{'f'}\hlstd{)} \hlopt{/} \hlkwd{nrow}\hlstd{(t1d)}
+\hlstd{p}
 \end{alltt}
+\begin{verbatim}
+## [1] 0.4904
+\end{verbatim}
 \end{kframe}
-
-{\centering \includegraphics[width=.5\linewidth]{figure/cor_matrix} 
-
-}
-
-
-
 \end{knitrout}
+  \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{PCA}
+\begin{frame}[fragile]{Binomial distribution}
+  \begin{itemize}
+    \item The number of females $Y$ in a new cohort of $n=50$ people is
+      binomial distributed:
+      \begin{align*}
+        Y \sim \operatorname{Binomial}(n, p)
+      \end{align*}
+    \item Assume that $p=\hat{p}=0.4904$ is the same as before ...
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Binomial distribution}
+  \begin{itemize}
+    \item then the probability $f(y)$ to observe $k$ females is:
+  \end{itemize}
 \begin{knitrout}\tiny
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{svd} \hlkwb{<-} \hlkwd{svd}\hlstd{(}\hlkwd{scale}\hlstd{(esc}\hlopt{$}\hlstd{counts))}
-\hlstd{dsvd} \hlkwb{<-} \hlkwd{as.data.frame}\hlstd{(svd}\hlopt{$}\hlstd{u[,} \hlnum{1}\hlopt{:}\hlnum{10}\hlstd{])}
-\hlkwd{colnames}\hlstd{(dsvd)} \hlkwb{<-} \hlkwd{paste0}\hlstd{(}\hlstr{'pc'}\hlstd{,} \hlkwd{seq}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwd{ncol}\hlstd{(dsvd)))}
-\hlstd{dsvd}\hlopt{$}\hlstd{cycle} \hlkwb{<-} \hlstd{esc}\hlopt{$}\hlstd{cycle}
-\hlstd{ve} \hlkwb{<-} \hlstd{svd}\hlopt{$}\hlstd{d}\hlopt{^}\hlnum{2} \hlopt{/} \hlkwd{sum}\hlstd{(svd}\hlopt{$}\hlstd{d}\hlopt{^}\hlnum{2}\hlstd{)}
-\hlkwd{barplot}\hlstd{(ve[}\hlnum{1}\hlopt{:}\hlnum{10}\hlstd{],} \hlkwc{xlab}\hlstd{=}\hlstr{'Principle components'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'% Variance explained'}\hlstd{,}
-        \hlkwc{col}\hlstd{=}\hlstr{'lightblue'}\hlstd{)}
+\hlstd{n} \hlkwb{<-} \hlnum{50}
+\hlstd{y} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{, n)}
+\hlstd{f_y} \hlkwb{<-} \hlkwd{dbinom}\hlstd{(y, n, p)}
+\hlstd{d} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x}\hlstd{=y,} \hlkwc{y}\hlstd{=f_y)}
+\hlkwd{ggplot}\hlstd{(d,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{'blue'}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{3}\hlstd{)} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{'y'}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{'f(y)'}\hlstd{)}
 \end{alltt}
 \end{kframe}
 
-{\centering \includegraphics[width=.8\linewidth]{figure/pca_ve} 
+{\centering \includegraphics[width=.5\linewidth]{figure/fig_bin_pdf} 
 
 }
 
@@ -286,15 +409,22 @@
 \end{knitrout}
 \end{frame}
 
-\begin{frame}[fragile]{PC1 versus PC2}
+\begin{frame}[fragile]{Binomial distribution}
+  \begin{itemize}
+    \item and the probability $F(Y)$ to observe up to $k$ females:
+  \end{itemize}
 \begin{knitrout}\tiny
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{ggplot}\hlstd{(dsvd,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=pc1,} \hlkwc{y}\hlstd{=pc2,} \hlkwc{color}\hlstd{=cycle))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlstd{n} \hlkwb{<-} \hlnum{50}
+\hlstd{y} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{, n)}
+\hlstd{F_y} \hlkwb{<-} \hlkwd{pbinom}\hlstd{(y, n, p)}
+\hlstd{d} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x}\hlstd{=y,} \hlkwc{y}\hlstd{=F_y)}
+\hlkwd{ggplot}\hlstd{(d,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{'blue'}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{3}\hlstd{)} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{'y'}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{'F(y)'}\hlstd{)}
 \end{alltt}
 \end{kframe}
 
-{\centering \includegraphics[width=.7\linewidth]{figure/pca_12} 
+{\centering \includegraphics[width=.5\linewidth]{figure/fig_bin_cdf} 
 
 }
 
@@ -303,15 +433,38 @@
 \end{knitrout}
 \end{frame}
 
-\begin{frame}[fragile]{Correlation PC1 and cell-cycle}
+\begin{frame}{Continuous Random Variable}
+  \begin{itemize}
+    \item $f(x) = P(X \in ]x-\epsilon;x+\epsilon[)$ is the \textbf{Probability Density Function (PDF)} of $X$
+    \item $F(X) = P(X\le x)$ is the \textbf{Cumulative Distribution Function (CDF)} of $X$
+  \end{itemize}
+  \begin{exampleblock}{Examples}
+    \begin{itemize}
+      \item $\operatorname{Normal}(\mu, \sigma^2)$: $\mathcal{D} = \mathbb{R}$ 
+      \item $\operatorname{Exponential}(\lambda)$: $\mathcal{D} = \mathbb{R}^+$
+      \item $\operatorname{Beta}(a, b)$: $\mathcal{D} = [0, \dots, 1]$
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Normal distribution}
+  \begin{itemize}
+    \item $X \sim N(\mu, \sigma^2)$
+    \item $E[X]=\mu$, $Var[X]=\sigma^2$
+    \item $Z \sim N(0, 1)$ is \textbf{standard normal} distribution
+    \item $X \sim N(\mu, \sigma^2) \rightarrow \frac{X-\mu}{\sigma} \sim N(0,1)$
+  \end{itemize}
 \begin{knitrout}\tiny
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{ggplot}\hlstd{(dsvd,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=cycle,} \hlkwc{y}\hlstd{=pc1,} \hlkwc{color}\hlstd{=cycle))} \hlopt{+} \hlkwd{geom_boxplot}\hlstd{()} \hlopt{+} \hlkwd{geom_jitter}\hlstd{(}\hlkwc{position}\hlstd{=}\hlkwd{position_jitter}\hlstd{(}\hlkwc{width}\hlstd{=}\hlnum{.1}\hlstd{))}
+\hlstd{x} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlopt{-}\hlnum{10}\hlstd{,} \hlnum{10}\hlstd{,} \hlkwc{len}\hlstd{=}\hlnum{100}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{dnorm}\hlstd{(x,} \hlkwc{mean}\hlstd{=}\hlnum{0}\hlstd{,} \hlkwc{sd}\hlstd{=}\hlnum{1.0}\hlstd{)}
+\hlstd{d} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y)}
+\hlkwd{ggplot}\hlstd{(d,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y))} \hlopt{+} \hlkwd{geom_line}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{'blue'}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{2}\hlstd{)} \hlopt{+} \hlkwd{xlab}\hlstd{(}\hlstr{'x'}\hlstd{)} \hlopt{+} \hlkwd{ylab}\hlstd{(}\hlstr{'f(x)'}\hlstd{)}
 \end{alltt}
 \end{kframe}
 
-{\centering \includegraphics[width=.7\linewidth]{figure/pca_cycle1} 
+{\centering \includegraphics[width=.6\linewidth]{figure/normal} 
 
 }
 
@@ -320,25 +473,18 @@
 \end{knitrout}
 \end{frame}
 
-\begin{frame}[fragile]{Accounting for cell-cycle}
+\begin{frame}[fragile]{Example}
+  \begin{itemize}
+    \item How is the \textbf{age} distributed in the T1D cohort?
+  \end{itemize}
 \begin{knitrout}\tiny
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{svd_compress} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{svd}\hlstd{,} \hlkwc{k}\hlstd{=}\hlnum{1}\hlstd{) \{}
-  \hlkwd{return} \hlstd{(svd}\hlopt{$}\hlstd{u[,} \hlnum{1}\hlopt{:}\hlstd{k,} \hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{]} \hlopt{%*%} \hlkwd{diag}\hlstd{(svd}\hlopt{$}\hlstd{d[}\hlnum{1}\hlopt{:}\hlstd{k],} \hlkwc{nrow}\hlstd{=k)} \hlopt{%*%} \hlkwd{t}\hlstd{(svd}\hlopt{$}\hlstd{v)[}\hlnum{1}\hlopt{:}\hlstd{k,,} \hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{])}
-\hlstd{\}}
-\hlstd{counts_pc1} \hlkwb{<-} \hlkwd{svd_compress}\hlstd{(svd,} \hlnum{1}\hlstd{)}
-\hlstd{counts_npc1} \hlkwb{<-} \hlstd{esc}\hlopt{$}\hlstd{counts} \hlopt{-} \hlstd{counts_pc1}
+\hlkwd{hist}\hlstd{(t1d}\hlopt{$}\hlstd{age,} \hlkwc{col}\hlstd{=}\hlstr{'grey'}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{'Age'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'Density'}\hlstd{,} \hlkwc{prob}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{main}\hlstd{=}\hlkwa{NULL}\hlstd{,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.12}\hlstd{))}
 \end{alltt}
 \end{kframe}
-\end{knitrout}
-\end{frame}
 
-\begin{frame}[fragile]{Raw counts}
-\begin{knitrout}\tiny
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-
-{\centering \includegraphics[width=\linewidth]{figure/heat_esc2} 
+{\centering \includegraphics[width=.8\linewidth]{figure/hist_age} 
 
 }
 
@@ -347,11 +493,23 @@
 \end{knitrout}
 \end{frame}
 
-\begin{frame}[fragile]{Counts explained by cell-cycle}
+\begin{frame}[fragile]{Example}
+  \begin{itemize}
+    \item Estimate $\mu$ and $\sigma$ via maximum likelihood:
+  \end{itemize}
 \begin{knitrout}\tiny
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mu} \hlkwb{<-} \hlkwd{mean}\hlstd{(t1d}\hlopt{$}\hlstd{age)}
+\hlstd{sigma} \hlkwb{<-} \hlkwd{sd}\hlstd{(t1d}\hlopt{$}\hlstd{age)}
+\hlstd{x} \hlkwb{<-} \hlkwd{seq}\hlstd{(}\hlkwd{min}\hlstd{(t1d}\hlopt{$}\hlstd{age),} \hlkwd{max}\hlstd{(t1d}\hlopt{$}\hlstd{age),} \hlkwc{len}\hlstd{=}\hlnum{100}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{dnorm}\hlstd{(x,} \hlkwc{mean}\hlstd{=mu,} \hlkwc{sd}\hlstd{=sigma)}
+\hlkwd{hist}\hlstd{(t1d}\hlopt{$}\hlstd{age,} \hlkwc{col}\hlstd{=}\hlstr{'grey'}\hlstd{,} \hlkwc{xlab}\hlstd{=}\hlstr{'Age'}\hlstd{,} \hlkwc{ylab}\hlstd{=}\hlstr{'Density'}\hlstd{,} \hlkwc{prob}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{main}\hlstd{=}\hlkwa{NULL}\hlstd{,} \hlkwc{ylim}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.12}\hlstd{))}
+\hlkwd{lines}\hlstd{(x, y,} \hlkwc{col}\hlstd{=}\hlstr{'blue'}\hlstd{,} \hlkwc{lwd}\hlstd{=}\hlnum{3}\hlstd{)}
+\end{alltt}
+\end{kframe}
 
-{\centering \includegraphics[width=\linewidth]{figure/heat_esc_pc1} 
+{\centering \includegraphics[width=.8\linewidth]{figure/hist_normal__k-age} 
 
 }
 
@@ -359,21 +517,9 @@
 
 \end{knitrout}
 \end{frame}
-
-\begin{frame}[fragile]{Counts after adjusting for cell-cycle}
-\begin{knitrout}\tiny
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
-
-{\centering \includegraphics[width=.9\linewidth]{figure/heat_esc_npc1} 
-
-}
-
-
-
-\end{knitrout}
-\end{frame}
-
-
+ 
+%knit_child('ht/main.Rnw')
+%knit_child('pca/main.Rnw')
 %knit_child('clust/main.Rnw')
 
 \end{document}

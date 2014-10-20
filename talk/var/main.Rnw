@@ -1,22 +1,57 @@
 \Sexpr{set_parent('../main.Rnw')}
 
-\section{Variables}
+\section{Descriptive statistics}
 \begin{frame}
 \tableofcontents[currentsection]
 \end{frame}
 
-\begin{frame}{Types}
+\begin{frame}{Statistical inference}
+  \begin{center}
+    \includegraphics[width=.7\linewidth]{inference.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Type-1 Diabetes (T1D) data}
+  \begin{itemize}
+    \item $9627$ samples from human population
+    \item Classified as diabetic or non-diabetic
+    \item Genotyped for T1D risk genes
+  \end{itemize}
+  \tiny
+<<t1d_table, results='asis'>>=
+xtable(t1d[sample(nrow(t1d))[1:10],])
+@
+\end{frame}
+
+\begin{frame}{T1D variables}
+  \begin{itemize}
+    \item $Y$: \textbf{Output variable}, \textbf{target variable}
+      \begin{itemize}
+        \item T1D yes or no
+      \end{itemize}
+    \item $X_i$: \textbf{Input variables}, \textbf{explanatory variables}, 
+      \textbf{covariates}
+      \begin{itemize}
+        \item Sex
+        \item Age
+        \item European
+        \item PTPN22, IL10, CTLA4, ...
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Types of variables}
   \begin{columns}[t]
     \begin{column}{.45\linewidth}
       \begin{exampleblock}{Discrete}
         \begin{itemize}
           \item $X \in \{s_1, s_2, \dots, s_n\}$
+          \item {\bf Binary} 
+            \\ $\text{european} \in \{\text{TRUE}, \text{FALSE}\}$
           \item {\bf Categorical} \\ 
             $\text{sex} \in \{\text{f}, \text{m}\}$
           \item {\bf Ordinal} 
             \\ $\text{age} \in \{\text{child}, \text{adult}, \text{elder}\}$
-          \item {\bf Binary} 
-            \\ $\text{european} \in \{\text{TRUE}, \text{FALSE}\}$
           \item {\bf Integer} 
             \\ $\text{ptpn22} \in \{0, 1, 2\}$
         \end{itemize}
@@ -32,16 +67,25 @@
     \end{column}
   \end{columns}
   \begin{align*}
-    \text{Categorical} < \text{Ordinal} < \text{Binary} < \text{Integer} <
+    \text{Binary} < \text{Categorical} < \text{Ordinal} < \text{Integer} <
     \text{Continuous}
   \end{align*}
+\end{frame}
+
+\begin{frame}{Operations on variables}
+  \begin{description}
+    \item[Count] Binary, categorical, ordinal, integer, continuous
+    \item[Median] Ordinal, integer, continuous
+    \item[Median] Ordinal, integer, continuous
+    \item[Mean] Integer, continuous
+  \end{description}
 \end{frame}
 
 \begin{frame}[fragile]{Count}
   \begin{definition}[Count]
     \begin{itemize}
       \item How often does $x$ appear?
-      \item Categorical variables
+      \item Binary, categorical, ordinal, integer, continuous
     \end{itemize}
   \end{definition}
 <<>>=
@@ -54,7 +98,7 @@ table(t1d$sex)
   \begin{definition}[Median]
     \begin{itemize}
       \item Value in the middle
-      \item Ordinary variables
+      \item Ordinal, integer, continuous
     \end{itemize}
   \end{definition}
 <<>>=
@@ -68,7 +112,7 @@ median(t1d$age)
     \begin{itemize}
       \item $q_p(X)$ is value $x$, s.t. $q\%$ of all $y \in Y$ are smaller than $x$
       \item $q_{0.5}(X) = \operatorname{median}(X)$
-      \item Ordinary variables
+      \item Ordinal, integer, continuous
     \end{itemize}
   \end{definition}
 <<>>=
@@ -87,11 +131,6 @@ quantile(t1d$age)
 <<>>=
 mean(t1d$age)
 @
-\end{frame}
-
-\section{Random variables}
-\begin{frame}
-\tableofcontents[currentsection]
 \end{frame}
 
 \begin{frame}{Random variable}
@@ -121,15 +160,42 @@ mean(t1d$age)
   \end{exampleblock}
 \end{frame}
 
-\begin{frame}[fragile]{Example}
+\begin{frame}[fragile]{Bernoulli distribution}
   \begin{itemize}
     \item The gender $X$ with $\mathcal{D}=\{f, m\}$ can be modelled as
       Bernoulli distributed:
+  \end{itemize}
+  \begin{columns}
+    \begin{column}{.5\linewidth}
       \begin{align*}
         X \sim \operatorname{Bernoulli}(p)
       \end{align*}
-    \item the \textbf{Maximum Likelihood} estimator $\hat{p}$ of the rate $p$
-      of females for the T1D dataset is:
+      \begin{align*}
+        E[X] = p
+      \end{align*}
+      \begin{align*}
+        Var[X] = p(1-p)
+      \end{align*}
+    \end{column}
+    \begin{column}{0.5\linewidth}
+<<hist_bernoulli, fig.width=10, fig.height=8, out.width='\\linewidth'>>=
+p <- 0.65
+exp <- p
+samples <- rbinom(100, 1, p)
+hist(samples, col='lightblue', main='', xlab='')
+abline(v=exp, col='red', lwd=2)
+@
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Bernoulli distribution}
+  \begin{itemize}
+    \item What is the rate $p$ of females of T1D samples?
+    \item The \textbf{maximum likelihood} estimator $\hat{p}$ of $p$ is:
+      \begin{align*}
+        \hat{p}=\frac{1}{n}\sum_i x_i
+      \end{align*}
 <<>>=
 p <- sum(t1d$sex == 'f') / nrow(t1d)
 p
@@ -137,7 +203,7 @@ p
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Example}
+\begin{frame}[fragile]{Binomial distribution}
   \begin{itemize}
     \item The number of females $Y$ in a new cohort of $n=50$ people is
       binomial distributed:
@@ -148,7 +214,7 @@ p
   \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Example}
+\begin{frame}[fragile]{Binomial distribution}
   \begin{itemize}
     \item then the probability $f(y)$ to observe $k$ females is:
   \end{itemize}
@@ -161,7 +227,7 @@ ggplot(d, aes(x=x, y=y)) + geom_point(color='blue', size=3) + xlab('y') + ylab('
 @
 \end{frame}
 
-\begin{frame}[fragile]{Example}
+\begin{frame}[fragile]{Binomial distribution}
   \begin{itemize}
     \item and the probability $F(Y)$ to observe up to $k$ females:
   \end{itemize}

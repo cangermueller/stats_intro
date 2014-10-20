@@ -1,0 +1,36 @@
+\Sexpr{set_parent('../main.Rnw')}
+
+\section{Introduction}
+\begin{frame}
+\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}{Sequencing costs}
+  \begin{itemize}
+    \item Rapidly declining sequencing costs per genome
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.8\linewidth]{costs_genome.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Big data in biology}
+  \begin{itemize}
+    \item EBI stores 10 peta-bytes: 10 000 000 000 000 000 bytes
+    \item 2 peta-beta bytes of genomic data
+    \item {\color{red} Huge computational challenges}
+    \item {\color{green} Huge biological potential}
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.5\linewidth]{data_ebi.jpg}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Why should I care about statistics?}
+  \begin{itemize}
+    \item Because you can analyse your own data
+    \item Because it allows you to tap the reservoir of biological da
+    \item Because it increases your chance to find a job after your PhD
+    \item Because it is fun!
+  \end{itemize}
+\end{frame}
