@@ -1,0 +1,153 @@
+\section{Clustering}
+\begin{frame}
+\tableofcontents[currentsection]
+\end{frame}
+
+\begin{frame}[fragile]{Clustering}
+  \begin{columns}
+    \begin{column}{.5\linewidth}
+      \begin{itemize}
+        \item \textbf{Goal}: Finding groups of related items
+          \vspace{1cm}
+        \item How do define relatedness?
+        \item Which clustering methods exist?
+        \item What is Hierarchical clustering?
+        \item How to visualize clustering?
+      \end{itemize}
+    \end{column}
+    \begin{column}{.5\linewidth}
+      \begin{center}
+        \includegraphics[width=.8\linewidth]{clust.png}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Methods}
+  \begin{columns}[t]
+    \begin{column}{.32\linewidth}
+      \begin{block}{Partitioning clustering}
+        \begin{itemize}
+          \item Partition points into k clusters
+          \item k known a-priori
+          \item k-means
+          \item k-medoids
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=\linewidth]{clust_part.png}
+        \end{center}
+      \end{block}
+    \end{column}
+    \begin{column}{.32\linewidth}
+      \begin{block}{Density clustering}
+        \begin{itemize}
+          \item Cluster points into dense regions
+          \item k unknown a-priori
+          \item DBSCAN
+          \item OPTICS
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=\linewidth]{clust_dens.png}
+        \end{center}
+      \end{block}
+    \end{column}
+    \begin{column}{.32\linewidth}
+      \begin{block}{Hierarchical clustering}
+        \begin{itemize}
+          \item Find hierarchy of clusters
+          \item k unknown a-priori
+          \item Single-linkage
+          \item Complete-linkage
+          \item Average-linkage
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=.6\linewidth]{clust_hier.png}
+        \end{center}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{How to define relatedness?}
+  \begin{block}{Distance}
+    \begin{itemize}
+      \item Euclidean distance
+      \item Manhattan distance
+      \item Binary distance
+    \end{itemize}
+  \end{block}
+  \begin{block}{Similarity}
+    \begin{itemize}
+      \item Identity
+      \item Correlation
+        \vspace{.3cm}
+      \item $\rightarrow$ Every similarity can be converted into distance
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Euclidean distance}
+  \begin{columns}
+    \begin{column}{.5\linewidth}
+      \begin{Definition}{Euclidean distance}
+        \begin{align*}
+          d(x, y) = \sqrt{\sum_i (x_i - y_i)^2}
+        \end{align*}
+      \end{Definition}
+    \end{column}
+    \begin{column}{.5\linewidth}
+      \begin{center}
+        \includegraphics[width=.8\linewidth]{dist_eucl.pdf}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Manhattan distance}
+  \begin{columns}
+    \begin{column}{.5\linewidth}
+      \begin{Definition}{Manhattan distance}
+        \begin{align*}
+          d(x, y) = \sum_i |x_i - y_i|
+        \end{align*}
+      \end{Definition}
+    \end{column}
+    \begin{column}{.5\linewidth}
+      \begin{center}
+        \includegraphics[width=.8\linewidth]{dist_man.pdf}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Hierarchical clustering}
+  \begin{itemize}
+    \item Constructs hierarchy of clusters represented by a \alert{Cluster dendrogram}
+    \item \alert{Cluster dendrogram}
+      \begin{itemize}
+        \item Leaf nodes: single data points
+        \item Inner nodes: cluster of points
+        \item Root node: all data points
+      \end{itemize}
+  \end{itemize}
+  \begin{center}
+    \includegraphics[width=.8\linewidth]{clust_dendro.png}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Algorithm}
+  \begin{enumerate}
+    \item Start with clusters that contain only one point
+    \item Compute distance between clusters
+    \item Merge the two clusters with lowest distance into new cluster
+    \item Go to step 2 until one single cluster remains
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{How to compute the distance between clusters?}
+  \begin{center}
+    \includegraphics[width=\linewidth]{clust_linkage.jpg}
+  \end{center}
+\end{frame}
+
+

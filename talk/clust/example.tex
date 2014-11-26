@@ -1,0 +1,36 @@
+\begin{frame}{Data}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{0}\hlstd{)}
+\hlstd{n} \hlkwb{=} \hlnum{5}
+\hlstd{nclust} \hlkwb{=} \hlnum{3}
+\hlstd{x_means} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{,} \hlnum{5}\hlstd{)}
+\hlstd{y_means} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{4}\hlstd{,} \hlnum{1}\hlstd{)}
+\hlstd{x} \hlkwb{=} \hlkwd{rnorm}\hlstd{(n} \hlopt{*} \hlstd{nclust,} \hlkwd{rep}\hlstd{(x_means,} \hlkwc{each}\hlstd{=n),} \hlkwc{sd}\hlstd{=}\hlnum{.5}\hlstd{)}
+\hlstd{y} \hlkwb{=} \hlkwd{rnorm}\hlstd{(n} \hlopt{*} \hlstd{nclust,} \hlkwd{rep}\hlstd{(y_means,} \hlkwc{each}\hlstd{=n),} \hlkwc{sd}\hlstd{=}\hlnum{.5}\hlstd{)}
+\hlstd{clust} \hlkwb{=} \hlkwd{factor}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{nclust,} \hlkwc{each}\hlstd{=n))}
+\hlstd{id} \hlkwb{=} \hlnum{1}\hlopt{:}\hlstd{(n} \hlopt{*} \hlstd{nclust)}
+\hlstd{data} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{id}\hlstd{=id,} \hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y,} \hlkwc{clust}\hlstd{=clust)}
+\hlkwd{ggplot}\hlstd{(data,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{'grey'}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figure/data-1} 
+
+}
+
+
+\begin{kframe}\begin{alltt}
+  \hlkwd{geom_text}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{label}\hlstd{=id,} \hlkwc{color}\hlstd{=clust),} \hlkwc{valign}\hlstd{=}\hlopt{-}\hlnum{1}\hlstd{,} \hlkwc{halign}\hlstd{=}\hlopt{-}\hlnum{1}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## mapping: label = id, colour = clust 
+## geom_text: parse = FALSE 
+## stat_identity: valign = -1, halign = -1 
+## position_identity: (width = NULL, height = NULL)
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+\end{frame}
+

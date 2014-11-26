@@ -1,0 +1,57 @@
+\begin{frame}[fragile]{Data}
+<<clust_data, fig.width=10, fig.height=6, out.width='.6\\linewidth'>>=
+set.seed(5)
+n = 5
+nclust = 3
+x_means = c(1, 2, 2.5)
+y_means = c(1, 2.5, 2)
+x = rnorm(n * nclust, rep(x_means, each=n), sd=.4)
+y = rnorm(n * nclust, rep(y_means, each=n), sd=.4)
+clust = factor(rep(1:nclust, each=n))
+id = 1:(n * nclust)
+cdata = data.frame(id=id, x=x, y=y, clust=clust)
+ggplot(cdata, aes(x=x, y=y)) + geom_point(aes(color=clust), size=3, show_guide=F) +
+  geom_text(aes(label=id, color=clust), show_guide=F, vjust=-.3, hjust=0)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Complete linkage}
+<<clust_complete, fig.width=10, fig.height=6, out.width='.8\\linewidth'>>=
+cdist = dist(cbind(cdata$x, cdata$y), method='euclidean')
+chclust = hclust(cdist, method='complete')
+plot(chclust, ylab='Distance', xlab=NA, main=NA, sub=NA)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Average linkage}
+<<clust_average, fig.width=10, fig.height=6, out.width='.8\\linewidth'>>=
+cdist = dist(cbind(cdata$x, cdata$y), method='euclidean')
+chclust = hclust(cdist, method='average')
+plot(chclust, ylab='Distance', xlab=NA, main=NA, sub=NA)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Single linkage}
+<<clust_single, fig.width=10, fig.height=6, out.width='.8\\linewidth'>>=
+cdist = dist(cbind(cdata$x, cdata$y), method='euclidean')
+chclust = hclust(cdist, method='single')
+plot(chclust, ylab='Distance', xlab=NA, main=NA, sub=NA)
+@
+\end{frame}
+
+\begin{frame}[fragile]{Data}
+<<clust_data2, fig.width=10, fig.height=6, out.width='.6\\linewidth'>>=
+set.seed(5)
+n = 5
+nclust = 3
+x_means = c(1, 2, 2.5)
+y_means = c(1, 2.5, 2)
+x = rnorm(n * nclust, rep(x_means, each=n), sd=.4)
+y = rnorm(n * nclust, rep(y_means, each=n), sd=.4)
+clust = factor(rep(1:nclust, each=n))
+id = 1:(n * nclust)
+cdata = data.frame(id=id, x=x, y=y, clust=clust)
+ggplot(cdata, aes(x=x, y=y)) + geom_point(aes(color=clust), size=3, show_guide=F) +
+  geom_text(aes(label=id, color=clust), show_guide=F, vjust=-.3, hjust=0)
+@
+\end{frame}
