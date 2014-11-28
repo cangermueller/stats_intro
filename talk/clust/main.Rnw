@@ -23,51 +23,6 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Methods}
-  \begin{columns}[t]
-    \begin{column}{.32\linewidth}
-      \begin{block}{Partitioning clustering}
-        \begin{itemize}
-          \item Partition points into k clusters
-          \item k known a-priori
-          \item k-means
-          \item k-medoids
-        \end{itemize}
-        \begin{center}
-          \includegraphics[width=\linewidth]{clust_part.png}
-        \end{center}
-      \end{block}
-    \end{column}
-    \begin{column}{.32\linewidth}
-      \begin{block}{Density clustering}
-        \begin{itemize}
-          \item Cluster points into dense regions
-          \item k unknown a-priori
-          \item DBSCAN
-          \item OPTICS
-        \end{itemize}
-        \begin{center}
-          \includegraphics[width=\linewidth]{clust_dens.png}
-        \end{center}
-      \end{block}
-    \end{column}
-    \begin{column}{.32\linewidth}
-      \begin{block}{Hierarchical clustering}
-        \begin{itemize}
-          \item Find hierarchy of clusters
-          \item k unknown a-priori
-          \item Single-linkage
-          \item Complete-linkage
-          \item Average-linkage
-        \end{itemize}
-        \begin{center}
-          \includegraphics[width=.6\linewidth]{clust_hier.png}
-        \end{center}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
 \begin{frame}[fragile]{How to define relatedness?}
   \begin{block}{Distance}
     \begin{itemize}
@@ -116,6 +71,54 @@
       \begin{center}
         \includegraphics[width=.8\linewidth]{dist_man.pdf}
       \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Methods}
+  \begin{columns}[t]
+    \begin{column}{.32\linewidth}
+      \begin{block}{Partitioning clustering}
+        \only<2->{
+        \begin{itemize}
+          \item Partition points into k clusters
+          \item k known a-priori
+          \item k-means
+          \item k-medoids
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=\linewidth]{clust_part.png}
+        \end{center}}
+      \end{block}
+    \end{column}
+    \begin{column}{.32\linewidth}
+      \begin{block}{Density clustering}
+        \only<3->{
+        \begin{itemize}
+          \item Cluster points into dense regions
+          \item k unknown a-priori
+          \item DBSCAN
+          \item OPTICS
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=\linewidth]{clust_dens.png}
+        \end{center}}
+      \end{block}
+    \end{column}
+    \begin{column}{.32\linewidth}
+      \begin{block}{Hierarchical clustering}
+        \only<4->{
+        \begin{itemize}
+          \item Find hierarchy of clusters
+          \item k unknown a-priori
+          \item Single-linkage
+          \item Complete-linkage
+          \item Average-linkage
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=.7\linewidth]{clust_hier.png}
+        \end{center}}
+      \end{block}
     \end{column}
   \end{columns}
 \end{frame}

@@ -103,51 +103,6 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Methods}
-  \begin{columns}[t]
-    \begin{column}{.32\linewidth}
-      \begin{block}{Partitioning clustering}
-        \begin{itemize}
-          \item Partition points into k clusters
-          \item k known a-priori
-          \item k-means
-          \item k-medoids
-        \end{itemize}
-        \begin{center}
-          \includegraphics[width=\linewidth]{clust_part.png}
-        \end{center}
-      \end{block}
-    \end{column}
-    \begin{column}{.32\linewidth}
-      \begin{block}{Density clustering}
-        \begin{itemize}
-          \item Cluster points into dense regions
-          \item k unknown a-priori
-          \item DBSCAN
-          \item OPTICS
-        \end{itemize}
-        \begin{center}
-          \includegraphics[width=\linewidth]{clust_dens.png}
-        \end{center}
-      \end{block}
-    \end{column}
-    \begin{column}{.32\linewidth}
-      \begin{block}{Hierarchical clustering}
-        \begin{itemize}
-          \item Find hierarchy of clusters
-          \item k unknown a-priori
-          \item Single-linkage
-          \item Complete-linkage
-          \item Average-linkage
-        \end{itemize}
-        \begin{center}
-          \includegraphics[width=.6\linewidth]{clust_hier.png}
-        \end{center}
-      \end{block}
-    \end{column}
-  \end{columns}
-\end{frame}
-
 \begin{frame}[fragile]{How to define relatedness?}
   \begin{block}{Distance}
     \begin{itemize}
@@ -196,6 +151,54 @@
       \begin{center}
         \includegraphics[width=.8\linewidth]{dist_man.pdf}
       \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Methods}
+  \begin{columns}[t]
+    \begin{column}{.32\linewidth}
+      \begin{block}{Partitioning clustering}
+        \only<2->{
+        \begin{itemize}
+          \item Partition points into k clusters
+          \item k known a-priori
+          \item k-means
+          \item k-medoids
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=\linewidth]{clust_part.png}
+        \end{center}}
+      \end{block}
+    \end{column}
+    \begin{column}{.32\linewidth}
+      \begin{block}{Density clustering}
+        \only<3->{
+        \begin{itemize}
+          \item Cluster points into dense regions
+          \item k unknown a-priori
+          \item DBSCAN
+          \item OPTICS
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=\linewidth]{clust_dens.png}
+        \end{center}}
+      \end{block}
+    \end{column}
+    \begin{column}{.32\linewidth}
+      \begin{block}{Hierarchical clustering}
+        \only<4->{
+        \begin{itemize}
+          \item Find hierarchy of clusters
+          \item k unknown a-priori
+          \item Single-linkage
+          \item Complete-linkage
+          \item Average-linkage
+        \end{itemize}
+        \begin{center}
+          \includegraphics[width=.7\linewidth]{clust_hier.png}
+        \end{center}}
+      \end{block}
     \end{column}
   \end{columns}
 \end{frame}
@@ -252,6 +255,34 @@
 \end{kframe}
 
 {\centering \includegraphics[width=.6\linewidth]{figure/clust_data-1} 
+
+}
+
+
+
+\end{knitrout}
+\end{frame}
+
+\begin{frame}[fragile]{Data}
+\begin{knitrout}\tiny
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{5}\hlstd{)}
+\hlstd{n} \hlkwb{=} \hlnum{5}
+\hlstd{nclust} \hlkwb{=} \hlnum{3}
+\hlstd{x_means} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2}\hlstd{,} \hlnum{2.5}\hlstd{)}
+\hlstd{y_means} \hlkwb{=} \hlkwd{c}\hlstd{(}\hlnum{1}\hlstd{,} \hlnum{2.5}\hlstd{,} \hlnum{2}\hlstd{)}
+\hlstd{x} \hlkwb{=} \hlkwd{rnorm}\hlstd{(n} \hlopt{*} \hlstd{nclust,} \hlkwd{rep}\hlstd{(x_means,} \hlkwc{each}\hlstd{=n),} \hlkwc{sd}\hlstd{=}\hlnum{.4}\hlstd{)}
+\hlstd{y} \hlkwb{=} \hlkwd{rnorm}\hlstd{(n} \hlopt{*} \hlstd{nclust,} \hlkwd{rep}\hlstd{(y_means,} \hlkwc{each}\hlstd{=n),} \hlkwc{sd}\hlstd{=}\hlnum{.4}\hlstd{)}
+\hlstd{clust} \hlkwb{=} \hlkwd{factor}\hlstd{(}\hlkwd{rep}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{nclust,} \hlkwc{each}\hlstd{=n))}
+\hlstd{id} \hlkwb{=} \hlnum{1}\hlopt{:}\hlstd{(n} \hlopt{*} \hlstd{nclust)}
+\hlstd{cdata} \hlkwb{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{id}\hlstd{=id,} \hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y,} \hlkwc{clust}\hlstd{=clust)}
+\hlkwd{ggplot}\hlstd{(cdata,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=x,} \hlkwc{y}\hlstd{=y))} \hlopt{+} \hlkwd{geom_point}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{'black'}\hlstd{,} \hlkwc{size}\hlstd{=}\hlnum{3}\hlstd{,} \hlkwc{show_guide}\hlstd{=F)} \hlopt{+}
+  \hlkwd{geom_text}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{label}\hlstd{=id),} \hlkwc{color}\hlstd{=}\hlstr{'black'}\hlstd{,} \hlkwc{show_guide}\hlstd{=F,} \hlkwc{vjust}\hlstd{=}\hlopt{-}\hlnum{.3}\hlstd{,} \hlkwc{hjust}\hlstd{=}\hlnum{0}\hlstd{)}
+\end{alltt}
+\end{kframe}
+
+{\centering \includegraphics[width=.6\linewidth]{figure/clust_data_black-1} 
 
 }
 
